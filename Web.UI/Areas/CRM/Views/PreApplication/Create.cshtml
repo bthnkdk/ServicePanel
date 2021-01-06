@@ -1,0 +1,14 @@
+﻿@model PreApplicationInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(s => s.CreatedUserId)
+    @Html.HiddenFor(s => s.CreatedDate)
+    @Html.EditorFor(q => q.PreApplicationTypeId)
+    @Html.EditorFor(q => q.CustomerName)
+    @Html.EditorFor(q => q.CustomerAuthorized)
+    @Html.EditorFor(q => q.CustomerEmail)
+    @Html.EditorFor(q => q.CustomerPhone)
+    @Html.EditorFor(q => q.PreApplicationStatusId)
+    @Html.EditorFor(q => q.Description)
+}

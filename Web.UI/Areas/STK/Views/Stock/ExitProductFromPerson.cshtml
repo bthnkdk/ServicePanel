@@ -1,0 +1,247 @@
+﻿@model StockUserInventoryViewModel
+@{
+    Layout = null;
+}
+@Html.Partial("_ValSum")
+<style>
+    .productRow {
+        padding: 3px 10px 0 10px !important;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <input type="hidden" value="@Model.AppUserId" name="AppUserId" />
+    <input type="hidden" value="@Model.IsExit" name="IsExit" id="IsExit" />
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2>@Model.FullName Envanter</h2>
+        </div>
+        <hr />
+        <div class="col-md-6 text-center">
+            <h2>Envanter</h2>
+        </div>
+        <div class="col-md-6 text-center">
+            <h2>Sepet</h2>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group row">
+                <table class="table table-striped" style="font-size:10px">
+                    <thead>
+                        <tr>
+                            <th style="width:50%">Ürün</th>
+                            <th>Adet</th>
+                            <th>Aktarım Adet</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="products">
+                        @if (Model.Products != null && Model.Products.Count > 0)
+                        {
+                            for (int i = 0; i < Model.Products.Count; i++)
+                            {
+                                <tr id="newProduct_@i">
+                                    <td class="productRow">
+                                        <input type="hidden" value="@Model.Products[i].StockId" id="send_@(i)_ProductId" class="inventoryProductId" />
+                                        <label class="form-control" id="send_@(i)_ProductName">@Model.Products[i].Name</label>
+                                    </td>
+                                    <td class="productRow">
+                                        <input type="hidden" value="@Model.Products[i].Count" id="send_@(i)_BaseCount" />
+                                        <label class="form-control" id="send_@(i)_BaseCountLabel">@Model.Products[i].Count</label>
+                                    </td>
+                                    <td class="productRow">
+                                        <input type="number" class="form-control" id="send_@(i)_Count"  value="0"/>
+                                    </td>
+                                    <td class="productRow">
+                                        <button type="button" onclick="sendProduct(@i)" class="btn btn-icon btn-warning">
+                                            <i class="fa fa-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-striped" style="font-size:10px">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th style="width:10%">Aktarım Adet</th>
+                        <th style="width:60%">Ürün</th>
+                        <th>Adet</th>
+                    </tr>
+                </thead>
+                <tbody id="sendItemBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <button type="button" class="btn btn btn-warning" id="turnBtn" onclick="showExit(true)">
+                Depoya İade
+            </button>
+            <button type="button" class="btn btn btn-success d-none" id="exitBtn" onclick="showExit(false)">
+                Firmaya Çık
+            </button>
+        </div>
+        <div class="col-md-10">
+            <div id="exitDiv" class="d-none row form-group">
+                <label class="col-sm-1 font-weight-bold col-form-label col-form-label-sm">Firma</label>
+                <div class="col-md-11">
+                    <select name="LocationId" class="form-control" id="LocationId" required></select>
+                    @Html.ValidationMessageFor(s => s.LocationId)
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script id="newProductTemplate" type="text/x-handlebars-template">
+    <tr id="newProduct_{{index}}">
+        <td class="productRow">
+            <button type="button" onclick="turnProduct(this)" data-id="{{index}}" class="btn btn-icon btn-warning">
+                <i class="fa fa-arrow-left"></i>
+            </button>
+        </td>
+        <td class="productRow">
+            <input type="number" class="form-control" id="SendItem_{{index}}_TurnCount" />
+        </td>
+        <td class="productRow">
+            <input type="hidden" value="{{Product.ProductId}}" class="productId" name="Products[{{index}}].StockId" id="SendItem_{{index}}_StockId" />
+            <label class="form-control">{{Product.Name}}</label>
+        </td>
+        <td class="productRow">
+            <input type="hidden" name="Products[{{index}}].Count" value="{{Product.Count}}" id="SendItem_{{index}}_Count" />
+            <label class="form-control" id="SendItem_{{index}}_CountLabel">{{Product.Count}}</label>
+        </td>
+    </tr>
+</script>
+<script>
+    $(document).ready(function () {
+    initDropDowns();
+    showModelErrors();
+})
+
+    function initDropDowns() {
+    var locationId = @(Model!=null ? Model.LocationId>0? Model.LocationId.ToString():"":"")
+        $.ajax({
+            url: '/Data/GetAllLocationsWithCustomerNameForSelect2',
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $("#LocationId").select2({
+        data: data,
+                width: '100%'
+            });
+            $("#LocationId").val(locationId).trigger('change');
+    })
+    }
+
+function showModelErrors() {
+    var errors = [];
+    @foreach (var error in ViewData.ModelState.Values.Where(s => s.Errors.Any()))
+        {
+        foreach (var item in error.Errors)
+        {
+            @:errors.push('@item.ErrorMessage')
+            }
+        }
+        showErrorMessagesOnValidate(errors);
+    }
+
+    var productTemplateScript = $("#newProductTemplate").html();
+    var productTemplate = Handlebars.compile(productTemplateScript);
+
+    function turnProduct(v) {
+        var id = $(v).attr("data-id");
+        var productId = $("#SendItem_" + id + "_StockId").val();
+        var count = parseInt($("#SendItem_" + id + "_TurnCount").val());
+        var baseCount = parseInt($("#SendItem_" + id + "_Count").val());
+
+        if (!count || count < 1) {
+            showError("Ürün adeti 1 den fazla olmalıdır");
+            return;
+        }
+
+        if (baseCount < count) {
+            showError("Ürün adeti mevcut adetten az olmalıdır.");
+            return;
+        }
+        baseCount -= count;
+        debugger;
+        var product = $("input[value='" + productId + "'][class='inventoryProductId']");
+        var sendCountId = product.attr("id").replace("ProductId", "BaseCount");
+        var sendCountLabelId = product.attr("id").replace("ProductId", "BaseCountLabel");
+        var oldCount = parseInt($("#" + sendCountId).val());
+        oldCount += count;
+        $("#" + sendCountId).val(oldCount);
+        $("#" + sendCountLabelId).html(oldCount);
+
+        $("#SendItem_" + id + "_Count").val(baseCount);
+        $("#SendItem_" + id + "_CountLabel").html(baseCount);
+        $("#SendItem_" + id + "_TurnCount").val(0);
+    }
+    function sendProduct(id) {
+        var productId = $("#send_" + id + "_ProductId").val();
+        var productName = $("#send_" + id + "_ProductName").text();
+        var count = parseInt($("#send_" + id + "_Count").val());
+        var baseCount = parseInt($("#send_" + id + "_BaseCount").val());
+
+        if (!count || count < 1) {
+            showError("Ürün adeti 1 den fazla olmalıdır");
+            return;
+        }
+
+        if (baseCount < count) {
+            showError("Ürün adeti mevcut adetten az olmalıdır.");
+            return;
+        }
+        baseCount -= count;
+
+        var product = $("input[value='" + productId + "'][class='productId']");
+        if (product.length) { // ürün sepette varsa
+            var sendCountId = product.attr("id").replace("StockId", "Count");
+            var sendCountLabelId = product.attr("id").replace("StockId", "CountLabel");
+            var oldCount = parseInt($("#" + sendCountId).val());
+            oldCount += count;
+            $("#" + sendCountId).val(oldCount);
+            $("#" + sendCountLabelId).html(oldCount);
+        }
+        else {
+            var index = $('#sendItemBody tr').length;
+
+            var product = {
+                Name: productName,
+                ProductId: productId,
+                Count: count
+            };
+
+            if (index == 0) {
+                $('#sendItemBody').html(productTemplate({ "Product": product, "index": index }));
+            }
+            else {
+                $('#sendItemBody tr:last').after(productTemplate({ "Product": product, "index": index }));
+            }
+        }
+
+        $("#send_" + id + "_BaseCount").val(baseCount);
+        $("#send_" + id + "_BaseCountLabel").html(baseCount);
+        $("#send_" + id + "_Count").val(0);
+    }
+    function showExit(isShow) {
+        if (isShow) {
+            $("#IsExit").val(1);
+            $("#exitDiv").removeClass("d-none");
+            $("#exitBtn").removeClass("d-none");
+            $("#turnBtn").addClass("d-none");
+        }
+        else {
+            $("#IsExit").val(0);
+            $("#exitDiv").addClass("d-none");
+            $("#exitBtn").addClass("d-none");
+            $("#turnBtn").removeClass("d-none");
+        }
+    }
+</script>

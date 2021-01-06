@@ -1,0 +1,8 @@
+@model DateTime?
+@{
+    Layout = "_FieldLayout.cshtml";
+}
+@Html.Awe().DatePicker("").ChangeMonth().ChangeYear().DateFormat("dd.MM.yyy").ReadonlyInput(true).ClearButton(true)
+<script>
+    $(".awe-datepicker-field input").addClass("form-control form-control-sm");
+</script>

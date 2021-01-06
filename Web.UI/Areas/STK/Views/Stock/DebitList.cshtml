@@ -1,0 +1,47 @@
+﻿@model List<StockDebitListModel>
+@using (Html.PageHead("Zimmet Listesi"))
+{
+    @Html.BreadCrumb("Zimmet Listesi", true, "/#/Stock/DebitList");
+}
+<link href="~/Content/htmltable/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" />
+<link href="~/Content/htmltable/css/main.css" rel="stylesheet" />
+<div class="table100 ver1 m-b-110">
+    <div class="table100-head">
+        <table>
+            <thead>
+                <tr class="row100 head">
+                    <th class="cell100 column1">Personel</th>
+                    <th class="cell100 column2">Ürün Sayısı</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="table100-body js-pscroll">
+        <table>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="row100 body">
+                        <td class="cell100 column1">@Model[i].FullName</td>
+                        <td class="cell100 column2">@Model[i].Count</td>
+                        <td class="cell100 column3">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="awe.open('exitProductFromPersonPopup', { params:{ appUserId: @Model[i].AppUserId }}, event)"><i class="fa fa-edit tooltip-text-success"></i> Düzenle</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@Html.CreatePopup("Stock", "ExitProductFromPerson", 400, 500, "exitProductFromPersonPopup", "", "Ürün Çıkışı", false, "utils.ajaxFormCompleted")
+<script src="~/Content/htmltable/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script>
+    $('.js-pscroll').each(function () {
+        var ps = new PerfectScrollbar(this);
+        $(window).on('resize', function () {
+            ps.update();
+        })
+    });
+</script>

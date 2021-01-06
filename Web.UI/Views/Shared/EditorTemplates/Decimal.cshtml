@@ -1,0 +1,15 @@
+@{
+    Layout = "_FieldLayout.cshtml";
+    ViewData.ModelMetadata.AdditionalValues.Add("__idpostfix", "-awed");
+    var values = ViewData.ModelMetadata.AdditionalValues;
+    bool isReadonly = false;
+    if(values.ContainsKey("ReadOnly"))
+    {
+        isReadonly = bool.Parse(values["ReadOnly"].ToString());
+    }
+}
+@Html.Awe().TextBox("").Numeric(o => o.Decimals(2).Min(0).ShowSpinners(!isReadonly)).CssClass("etxt extformat form-control form-control-sm").ReadonlyInput(isReadonly)
+@if (values.ContainsKey("Info"))
+{
+    <small class="form-text text-muted">@Html.Raw(values["Info"].ToString())</small>
+}

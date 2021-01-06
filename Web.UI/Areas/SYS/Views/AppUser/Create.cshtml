@@ -1,0 +1,66 @@
+﻿@model AppUserInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    using (Html.Awe().BeginContext())
+    {
+        @Html.HiddenFor(o => o.RowId)
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" aria-controls="userTab" href="#userTab" role="tab" aria-selected="true"><i class="fa fa-play"></i> Kullanıcı Bilgileri</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" aria-controls="detailTab" href="#detailTab" role="tab" aria-selected="false"><i class="fa fa-flag"></i> Detaylı Bilgiler</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" aria-controls="actionTab" href="#actionTab" role="tab" aria-selected="false"><i class="fa fa-flag"></i> Aksiyonlar</a>
+            </li>
+        </ul>
+        <div class="tab-content px-1 pt-1">
+            <div class="tab-pane active" id="userTab" role="tabpanel" aria-labelledby="baseIcon-tab1">
+                @Html.EditorFor(o => o.Firstname)
+                @Html.EditorFor(o => o.Lastname)
+                @Html.EditorFor(o => o.Username)
+                @Html.EditorFor(o => o.DepartmentId)
+                @Html.EditorFor(o => o.TitleId)
+                @Html.EditorFor(o => o.SubTitle)
+                @Html.EditorFor(o => o.Mobile)
+            </div>
+            <div class="tab-pane" id="detailTab" role="tabpanel" aria-labelledby="baseIcon-tab2">
+                @Html.EditorFor(o => o.IsLock)
+                @Html.EditorFor(o => o.IsAdmin)
+                @Html.EditorFor(o => o.Description)
+            </div>
+            <div class="tab-pane" id="actionTab" role="tabpanel" aria-labelledby="baseIcon-tab3">
+                @Html.EditorFor(o => o.CopyAppUserId)
+                @if (!Model.IsNew)
+                {
+                    <div class="row form-group float-right">
+                        <div class="col-md-12">
+                            <button onclick="resetPassword()" type="button" class="btn btn-info">Parolayı Sıfırla</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+<script>
+    function resetPassword() {
+        if (confirm("Parolayı sıfırlamak istediğinize emin misiniz ?")) {
+            $.ajax({
+                url: '/AppUser/ResetPassword/@Model.Id',
+                type: "POST",
+                processData: false,
+                contentType: false,
+                success: function (o) {
+                    if (o.Error) {
+                        awem.notif(o.Error, 3000, 'o-err');
+                        return;
+                    }
+                    awem.notif(o.Content, 3000, 'o-msg');
+                }
+            });
+        }
+    }
+</script>

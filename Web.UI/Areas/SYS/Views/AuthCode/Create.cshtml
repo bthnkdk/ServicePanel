@@ -1,0 +1,11 @@
+﻿@model AuthCodeInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    using (Html.Awe().BeginContext())
+    {
+        @Html.HiddenFor(o => o.Id)
+        @Html.EditorFor(s => s.Name)
+        @Html.EditorFor(s => s.Code)
+    }
+}

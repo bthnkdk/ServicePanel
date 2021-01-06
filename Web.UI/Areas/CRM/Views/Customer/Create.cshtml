@@ -1,0 +1,111 @@
+﻿@model CustomerInput
+@using (Html.PageHead("Müşteri Listesi"))
+{
+    @Html.BreadCrumb("Müşteri Listesi", false, "/#/Customer/Index");
+    @Html.BreadCrumb(Model.Name);
+}
+<div class="row">
+    <div class="col-md-12">
+        @Html.Partial("_ValSum")
+        @using (Html.Card("Müşteri Bilgileri", "MusteriCard"))
+        {
+            using (Html.BeginForm("Create", "Customer", FormMethod.Post, new { @class = "ajaxForm formLoad" }))
+            {
+                @Html.Partial("_Form", Model)
+            }
+        }
+    </div>
+</div>
+@if (Model.Id > 0)
+{
+    <div class='card' id='locationCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>Lokasyon Bilgileri</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-plus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collapse'>
+            <div class='card-body' id='locationCardBody'>
+            </div>
+        </div>
+    </div>
+    <div class='card' id='printerCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>Yazıcı Bilgileri</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-plus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collapse'>
+            <div class='card-body' id='printerCardBody'>
+            </div>
+        </div>
+    </div>
+    <div class='card' id='serviceCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>Servis Listesi</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-plus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collapse'>
+            <div class='card-body' id='serviceCardBody'>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('.ajaxForm').bind('invalid-form.validate', function (form, validator) {
+            showErrorMessagesOnValidate(validator.errorList);
+        });
+        getLocation();
+        getPrinter();
+        getService();
+        initForm();
+    });
+    function getLocation() {
+        $.ajax({
+            type: "GET",
+            url: "/CRM/Location/CustomerLocations/?customerId=@Model.Id",
+            success: function (result) {
+                $("#locationCardBody").html(result);
+            },
+            error: function (errorData) { showError(errorData); }
+        });
+    }
+    function getPrinter() {
+        $.ajax({
+            type: "GET",
+            url: "/PRT/Printer/CustomerPrinters/?customerId=@Model.Id",
+            success: function (result) {
+                $("#printerCardBody").html(result);
+            },
+            error: function (errorData) { showError(errorData); }
+        });
+    }
+     function getService() {
+        $.ajax({
+            type: "GET",
+            url: "/SVC/Service/CustomerServices/?customerId=@Model.Id",
+            success: function (result) {
+                $("#serviceCardBody").html(result);
+            },
+            error: function (errorData) { showError(errorData); }
+        });
+    }
+</script>
+@Html.Awe().Form().FormClass("ajaxForm").FillFormOnContent(true).Success("ajaxFormCompleted")

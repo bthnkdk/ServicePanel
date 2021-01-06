@@ -1,0 +1,44 @@
+﻿@model CustomerInput
+@using (Html.Awe().BeginContext())
+{
+    @Html.HiddenFor(s => s.Id)
+    @Html.HiddenFor(s => s.CreatedUserId)
+    @Html.HiddenFor(s => s.CreatedDate)
+    @Html.HiddenFor(s => s.RowId)
+    <div class="form-body">
+        <h4 class="form-section"><i class="ft-user"></i> Temel Bilgiler</h4>
+        @Html.EditorFor(s => s.Name)
+        @Html.EditorFor(s => s.CustomerTypeId)
+        @Html.EditorFor(s => s.CustomerCode)
+        @Html.EditorFor(s => s.VerDar)
+        @Html.EditorFor(s => s.VerNo)
+        <h4 class="form-section"><i class="ft-clipboard"></i> Detaylı Bilgiler</h4>
+        @Html.EditorFor(s => s.WebSite)
+        @if (Model.Id == 0)
+        {
+            <input type="hidden" class="form-control" name="Location.Name" value="Merkez" />
+            <div class="form-group row">
+                <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Şehir</label>
+                <div class="col-md-8">
+                    @Html.Awe().AjaxRadioList("Location.CityId").Url(Url.Content("/Data/GetCities")).Odropdown()
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Semt</label>
+                <div class="col-md-8">
+                    @Html.Awe().AjaxRadioList("Location.TownId").Url(Url.Content("/Data/GetTowns")).Parent("Location.CityId").Odropdown()
+                </div>
+            </div>
+            @Html.HiddenFor(s => s.Location.CreatedDate)
+            @Html.HiddenFor(s => s.Location.CreatedUserId)
+            @Html.HiddenFor(s => s.Location.RowId)
+            @Html.EditorFor(s => s.Location.Address)
+            @Html.EditorFor(s => s.Location.Mail)
+            @Html.EditorFor(s => s.Location.Phone)
+            @Html.EditorFor(s => s.Location.ResponsibleMail)
+            @Html.EditorFor(s => s.Location.ResponsibleName)
+            @Html.EditorFor(s => s.Location.ResponsiblePhone)
+        }
+    </div>
+    <button type="submit" class="btn btn-primary btn-min-width mr-1 mb-1 pull-right"><i class="fa fa-save"></i> Kaydet</button>
+}

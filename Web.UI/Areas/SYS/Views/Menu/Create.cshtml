@@ -1,0 +1,14 @@
+﻿@model MenuInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+   
+        @Html.HiddenFor(o => o.Id)
+        @Html.EditorFor(o => o.Name)
+        @Html.EditorFor(o => o.Url)
+        @Html.EditorFor(o => o.AuthCodeId)
+        @Html.EditorFor(o => o.OrderNumber)
+        @Html.EditorFor(o => o.Icon)
+        @Html.EditorFor(o => o.ParentId)
+    
+}

@@ -1,0 +1,32 @@
+﻿@{
+    string controllerName = "PreApplication";
+}
+@using (Html.PageHead("Ön Başvurular"))
+{
+    @Html.BreadCrumb("Ön Başvuru Listesi", true, "/#/PreApplication/Index");
+}
+
+@using (Html.GridActionBar())
+{
+    <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-secondary btn-md" type="button" onclick="@Html.Awe().OpenPopup($"create{controllerName}Grid").MaxWidth(1000)" title="Yeni"><i class='fa fa-plus tooltip-text-success'></i> Yeni</button>
+    </div>
+    <div class="pull-right">
+        @Html.Awe().TextBox("txtSearch").Placeholder("ara").CssClass("searchtxt form-control form-control-sm").HtmlAttributes(new { onkeypress = $"return searchGrid(event,'{controllerName}Grid')" })
+        <button class="btn btn-secondary btn-sm" type="button" onclick="$('#@controllerName'+'Grid').data('api').load(); " title="Ara"><i class='fa fa-search'></i></button>
+    </div>
+}
+@Html.InitCrudPopupsForGrid(controllerName + "Grid", controllerName, 250, 650, "Ön Başvuru")
+<div>
+    @Html.Awe().Grid(controllerName + "Grid").Url(Url.Action("GridGetItems")).Parent("txtSearch").SingleColumnSort(true).Mod(o => o.AutoMiniPager().PageSize().PageInfo().Loading()).Persistence(Persistence.Local).PageSize(100).LoadOnParentChange(false).Columns(
+        new Column { ClientFormat = GridUtils.EditFormat($"edit{controllerName}Grid"), Width = 40 }.Mod(o => o.Nohide()),
+        new Column { Bind = "CustomerName", Header = "Müşteri" },
+        new Column { Bind = "CustomerAuthorized", Header = "Yetkili" },
+        new Column { Bind = "CreatedDate", Header = "Tarih" },
+        new Column { Bind = "",ClientFormat = ".CreatedUserName", Header = "Oluşturan" },
+        new Column { Bind = "",ClientFormat = ".UpdatedUserName", Header = "Son Güncelleyen" },
+        new Column { Bind = "UpdatedDate", Header = "Son Günceleme Tarihi" },
+        new Column { Bind = "PreApplicationType.Name",ClientFormat = ".PreApplicationTypeName", Header = "Başvuru Tipi" },
+        new Column { Bind = "PreApplicationStatus.Name",ClientFormat = ".PreApplicationStatusName", Header = "Durum" },
+        new Column { ClientFormatFunc = $"utils.deleteFormat('delete{controllerName}Grid','{controllerName}Grid')", Width = 40 }.Mod(o => o.Nohide())).ShowGroupBar(false)
+</div>

@@ -1,0 +1,10 @@
+﻿<div class="form-group row">
+    @{
+        var postfix = ViewData.ModelMetadata.AdditionalValues.ContainsKey("__idpostfix") ? ViewData.ModelMetadata.AdditionalValues["__idpostfix"] : string.Empty;
+    }
+    @Html.Label("", new { @class = "col-sm-4 font-weight-bold col-form-label col-form-label-sm", @for = HttpContext.Current.Items[Settings.ContextKey] + ViewData.TemplateInfo.GetFullHtmlFieldId(string.Empty) + postfix })
+    <div class="col-sm-8">
+        @RenderBody()
+        @Html.ValidationMessage("", new { @class = "text-danger" })
+    </div>
+</div>

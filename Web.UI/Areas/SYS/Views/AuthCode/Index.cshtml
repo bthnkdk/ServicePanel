@@ -1,0 +1,20 @@
+﻿@{
+    string controllerName = "AuthCode";
+}
+@Html.InitCrudPopupsForGrid(controllerName + "Grid", controllerName, 200, 300, "Yetki Kodu")
+
+@using (Html.GridActionBar())
+{
+    <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-secondary" type="button" onclick="@Html.Awe().OpenPopup($"create{controllerName}Grid").MaxWidth(500)" title="Yeni"><i class='fa fa-plus tooltip-text-success'></i> Yeni</button>
+    </div>
+    <div class="pull-right">
+        @Html.Awe().TextBox("txtSearch").Placeholder("ara").CssClass("searchtxt form-control form-control-sm").HtmlAttributes(new { onkeypress = "return searchGrid(event,'AppUserGrid')" })
+        <button class="btn btn-secondary" type="button" onclick="$('#@controllerName'+'Grid').data('api').load();" title="Ara"><i class='fa fa-search'></i> Ara </button>
+    </div>
+}
+@Html.Awe().Grid(controllerName + "Grid").Url(Url.Action("GridGetItems")).Parent("txtSearch").Persistence(Persistence.Local).SingleColumnSort(true).Mod(o => o.PageSize().PageInfo().Loading().AutoMiniPager()).MinHeight(600).LoadOnParentChange(false).Columns(
+           new Column { Bind = "Name", Header = "Ad", Sort = Sort.Asc },
+           new Column { Bind = "Code", Header = "Kod" },
+           new Column { ClientFormat = GridUtils.EditFormat($"edit{controllerName}Grid"), Width = 40 }.Mod(o => o.Nohide()),
+           new Column { ClientFormatFunc = $"utils.deleteFormat('delete{controllerName}Grid','{controllerName}Grid')", Width = 40 }.Mod(o => o.Nohide())).PageSize(20)

@@ -1,0 +1,185 @@
+﻿@model DebitProductInput
+@{
+    Layout = null;
+}
+@Html.Partial("_ValSum")
+<style>
+    .productRow{
+        padding: 3px 10px 0 10px !important;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    <div class="form-group row">
+        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Personel</label>
+        <div class="col-md-8">
+            <select name="AppUserId" class="form-control" id="AppUserId" required></select>
+            @Html.ValidationMessageFor(s => s.AppUserId)
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Ürün</label>
+        <div class="col-md-8">
+            <select class="form-control" id="ProductId"></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Adet</label>
+        <div class="col-md-6">
+            <input type="number" class="form-control" id="ProductCount" />
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-warning" onclick="addProduct()">Listeye Ekle</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <table class="table table-striped" style="font-size:10px">
+            <thead>
+                <tr>
+                    <td width="70%">Ürün</td>
+                    <td width="20%">Adet</td>
+                    <td width="15px"></td>
+                </tr>
+            </thead>
+            <tbody id="products">
+                @if (Model.StockList != null && Model.StockList.Count > 0)
+                {
+                    for (int i = 0; i < Model.StockList.Count; i++)
+                    {
+                        <tr id="newProduct_@i">
+                            <td class="productRow">
+                                <input type="hidden" value="@Model.StockList[i].Id" class="productId" name="StockList[@i].Id" />
+                                <input type="hidden" value="@Model.StockList[i].Name" name="StockList[@i].Name" />
+                                <input type="hidden" value="@Model.StockList[i].IsDeleted" name="StockList[@i].IsDeleted" id="StockList_@(i)_IsDeleted" />
+                                <label class="form-control">@Model.StockList[i].Name</label>
+                            </td>
+                            <td class="productRow">
+                                <input type="number" value="@Model.StockList[i].Count" class="form-control" name="StockList[@i].Count" required />
+                            </td>
+                            <td class="productRow">
+                                <button type="button" onclick="deleteProduct(this)" data-id="@i" class="btn btn-icon btn-danger mr-1 mb-1">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<script id="newProductTemplate" type="text/x-handlebars-template">
+    <tr id="newProduct_{{index}}">
+        <td class="productRow">
+            <input type="hidden" value="{{Product.ProductId}}" class="productId" name="StockList[{{index}}].Id" />
+            <input type="hidden" value="{{Product.Name}}" name="StockList[{{index}}].Name"/>
+            <input type="hidden" value="0" name="StockList[{{index}}].IsDeleted" id="StockList_{{index}}_IsDeleted" />
+            <label class="form-control">{{Product.Name}}</label>
+        </td>
+        <td class="productRow">
+            <input type="number" value="{{Product.Count}}" class="form-control" name="StockList[{{index}}].Count" required />
+        </td>
+        <td class="productRow">
+            <button type="button" onclick="deleteProduct(this)" data-id="{{index}}" class="btn btn-icon btn-danger mr-1 mb-1">
+                <i class="fa fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</script>
+<script>
+    $(document).ready(function () {
+    initDropDowns();
+    showModelErrors();
+})
+
+    function initDropDowns() {
+    var appUserId = @(Model!=null ? Model.AppUserId>0? Model.AppUserId.ToString():"":"")
+        $.ajax({
+            url: '/Data/GetAppUserForSelect2',
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $("#AppUserId").select2({
+        data: data,
+                width: '100%'
+            });
+            $("#AppUserId").val(appUserId).trigger('change');
+    })
+
+        $.ajax({
+            url: '/Data/GetProductForSelect2',
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $("#ProductId").select2({
+        data: data,
+                width: '100%'
+            });
+    })
+    }
+
+function showModelErrors() {
+    var errors = [];
+    @foreach (var error in ViewData.ModelState.Values.Where(s => s.Errors.Any()))
+        {
+        foreach (var item in error.Errors)
+        {
+            @:errors.push('@item.ErrorMessage')
+            }
+        }
+        showErrorMessagesOnValidate(errors);
+    }
+
+    var productTemplateScript = $("#newProductTemplate").html();
+    var productTemplate = Handlebars.compile(productTemplateScript);
+
+    function addProduct() {
+        var productId = $("#ProductId").val();
+
+        if (isProductExists(productId)) {
+            showError("Bu ürün zaten listede mevcut");
+            return;
+        }
+
+        var index = $('#products tr').length;
+        var productName = $("#ProductId").select2('data')[0].text;
+        var count = $("#ProductCount").val();
+
+        if (count < 1) {
+            showError("Ürün adeti 1 den fazla olmalıdır");
+            return;
+        }
+
+        var product = {
+            Name: productName,
+            ProductId: productId,
+            Count: count
+        };
+
+        if (index == 0) {
+            $('#products').html(productTemplate({ "Product": product, "index": index }));
+        }
+        else {
+            $('#products tr:last').after(productTemplate({ "Product": product, "index": index }));
+        }
+        clearProduct();
+    }
+
+    function isProductExists(id) {
+        var product = $("input[value='" + id + "'][class='productId']");
+        if (product.length)
+            return true;
+        return false;
+    }
+
+    function clearProduct() {
+        $("#productId").val("");
+        $("#productCount").val("");
+    }
+
+    function deleteProduct(v) {
+        var id = $(v).attr("data-id");
+        $("#newProduct_" + id).hide();
+        $("#StockList_" + id + "_IsDeleted").val(1);
+    }
+</script>

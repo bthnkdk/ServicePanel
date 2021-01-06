@@ -1,0 +1,32 @@
+﻿@model PrinterInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    //using (Html.Awe().BeginContext())
+    //{
+    @Html.HiddenFor(s => s.CreatedUserId)
+    @Html.HiddenFor(s => s.CreatedDate)
+    @Html.HiddenFor(q => q.RowId)
+    @Html.HiddenFor(q => q.CustomerId)
+    @*@Html.EditorFor(s => s.CustomerName)*@
+    <div class="form-group row">
+        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Müşteri Adı</label>
+        <div class="col-sm-8">
+            @(Html.Awe().AutocompleteFor(s => s.CustomerName).PropId(s => s.CustomerId).Url(Url.Content("/Data/CustomerAutoComplete")).Placeholder("Müşteri Adı").CssClass("w-100"))
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Lokasyon</label>
+        <div class="col-md-8">
+            @Html.Awe().AjaxRadioList("LocationId").Url(Url.Content("/Data/GetLocationByCustomer")).Odropdown().Parent("CustomerId")
+        </div>
+    </div>
+    @Html.EditorFor(s => s.BrandId)
+    @Html.EditorFor(s => s.PrinterModelId)
+    @Html.EditorFor(s => s.SerialNumber)
+    @Html.EditorFor(s => s.Name)
+    @Html.EditorFor(s => s.PrinterNumber)
+    @Html.EditorFor(s => s.LastMaintenanceDate)
+    @Html.EditorFor(s => s.Description)
+    //}
+}

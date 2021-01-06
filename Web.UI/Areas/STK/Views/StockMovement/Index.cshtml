@@ -1,0 +1,48 @@
+﻿@{
+    string controllerName = "StockMovement";
+    var btn = Html.Awe().Button()
+           .Text("Detay")
+           .CssClass("o-pad")
+           .OnClick(Html.Awe().OpenPopup("details")
+           .Params(new { id = ".(Id)" }))
+           .ToString();
+    var linkFormat = "<a href='" + Url.Action("OpenDetails", "StockMovement", new { id = ".(Id)" }) + "'></a>";
+}
+@using (Html.PageHead("Stok Hareketleri"))
+{
+    @Html.BreadCrumb("Stok Hareket Listesi", true, "/#/StockMovement/Index");
+}
+    <div>
+        @Html.Awe().Grid(controllerName + "Grid").Url(Url.Action("GridGetItems")).SingleColumnSort(true).Mod(o => o.AutoMiniPager().ColumnsSelector().PageInfo()).PageSize(10).Columns(
+            new Column { Bind = "Location.Name", ClientFormat = ".LocationName", Header = "Lokasyon" },
+            new Column { Bind = "Stock.Name", ClientFormat = ".StockName", Header = "Stok Adı" },
+            new Column { Bind = "AppUser.Id", ClientFormat = ".CreatedUserName", Header = "Oluşturan" },
+            new Column { Bind = "Count", Header = "Adet" },
+            new Column { Bind = "Action", ClientFormatFunc = "action", Header = "Aksiyon" },
+            new Column { Bind = "Date", ClientFormat = ".CreatedDate", Header = "Tarih" },
+            new Column { Bind = "",ClientFormat = btn, Width = 90 })
+
+    </div>
+@Html.Awe().InitPopup().Name("details").Url(Url.Action("Details", controllerName)).Mod(o => o.Dropdown()).Modal()
+<script>
+    function action(controllername, prop) {
+        var color = 'navy';
+        var action = controllername[prop];
+        if (action == 1) {
+            color = 'green';
+            action = "Giriş";
+        }
+        if (action == 2) {
+            color = 'red';
+            action = "Çıkış";
+        }
+        if (action == 3) {
+            color = 'darkorange';
+            action = "Zimmet";
+        }
+        if (action == 4) {
+            action = "İade";
+        }
+        return "<div style='color:" + color + ";text-width:bold;'>" + action + "</div>";
+    }
+</script>

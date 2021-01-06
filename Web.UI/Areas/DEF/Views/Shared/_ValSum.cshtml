@@ -1,0 +1,6 @@
+@if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.ValidationSummary(true)
+    </div>
+}

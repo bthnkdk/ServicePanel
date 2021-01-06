@@ -1,0 +1,51 @@
+﻿<div class="modal fade" id="addNewPrinterModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yeni Yazıcı</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Yazıcı</label>
+                    <div class="col-md-8"><select id="newPrinterId" class="form-control col-md-12"></select></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Durum</label>
+                    <div class="col-md-8"><select id="newPrinterStatus" class="form-control printerServiceStatusSelect"></select></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">İşlem Kategori</label>
+                    <div class="col-md-8"><select id="newPrinterServiceTypeId" class="form-control printerServiceTypeSelect"></select></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Problem</label>
+                    <div class="col-md-8"><textarea id="newPrinterDescription" rows="8" class="form-control form-control-sm"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">İşlem</label>
+                    <div class="col-md-8"><textarea id="newPrinterProcess" rows="8" class="form-control form-control-sm"></textarea></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Siyah</label>
+                    <div class="col-md-8"><input id="newPrinterMono" type="number" value="0" class="form-control form-control-sm" /></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Renkli</label>
+                    <div class="col-md-8"><input id="newPrinterColor" type="number" value="0" class="form-control form-control-sm" /></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Bakım</label>
+                    <div class="col-md-8">
+                        <input id="newPrinterMaintenance" class="awe-val awe-chk" type="checkbox" value="false">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="addPrinter()" class="btn btn-primary">Kaydet</button>
+                <button type="button" onclick="clearNewPrinter()" class="btn btn-warning">Temizle</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+            </div>
+        </div>
+    </div>
+</div>

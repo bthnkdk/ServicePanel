@@ -1,0 +1,10 @@
+@{
+    Layout = "_FieldLayout.cshtml";
+    ViewData.ModelMetadata.AdditionalValues.Add("__idpostfix", "-awed");
+    var values = ViewData.ModelMetadata.AdditionalValues;
+}
+@Html.Awe().TextBox("").Numeric(o => o.Min(10).Max(10000).Step(10)).CssClass("etxt extformat form-control form-control-sm")
+@if (values.ContainsKey("Info"))
+{
+    <small class="form-text text-muted">@values["Info"].ToString()</small>
+}

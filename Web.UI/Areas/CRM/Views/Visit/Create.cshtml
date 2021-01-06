@@ -1,0 +1,83 @@
+﻿@model VisitInput
+@using (Html.PageHead("Ziyaret Listesi"))
+{
+    @Html.BreadCrumb("Ziyaret Listesi", false, "/#/Visit/Index");
+}
+<div class="row">
+    <div class="col-md-12">
+        @Html.Partial("_ValSum")
+        @using (Html.Card("Ziyaret Bilgileri", "ZiyaretCard"))
+        {
+            using (Html.BeginForm("Create", "Visit", FormMethod.Post, new { @class = "ajaxForm formLoad" }))
+            {
+                @Html.Partial("_Form", Model)
+            }
+        }
+
+    </div>
+</div>
+@if (Model.Id > 0)
+{
+    <div class='card' id='visitLogCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>AKSİYONLAR</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-minus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase show'>
+            <div class='card-body' id='visitLogCardBody'>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('.ajaxForm').bind('invalid-form.validate', function (form, validator) {
+            showErrorMessagesOnValidate(validator.errorList);
+        });
+        getVisitLog();
+        initForm();
+    });
+    function getVisitLog() {
+        $.ajax({
+            type: "GET",
+            url: "/CRM/Visit/VisitLogs/@Model.Id",
+            success: function (result) {
+                $("#visitLogCardBody").html(result);
+            },
+            error: function (errorData) { showError(errorData); }
+        });
+    }
+    function customAjaxCompleted(o) {
+
+        if (o.Error) {
+            awem.notif(o.Error, 15000, 'o-err');
+            return;
+        }
+        if (o.Url && o.Content) {
+            awem.notif(o.Content, 5000, 'o-msg');
+            setTimeout(function () {
+                document.location.href = o.Url;
+                return;
+            }, 2000);
+        }
+        if (o.Url) {
+            document.location.href = o.Url;
+            return;
+        }
+        if (o.Content)
+            awem.notif(o.Content, 5000, 'o-msg');
+        if (o.ErrorList) {
+            showErrorMessagesOnValidate(o.ErrorList);
+        }
+
+        getVisitLog();
+    }
+</script>
+@Html.Awe().Form().FormClass("ajaxForm").FillFormOnContent(true).Success("customAjaxCompleted")
+

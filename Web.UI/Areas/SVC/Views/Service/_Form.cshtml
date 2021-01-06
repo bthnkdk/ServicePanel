@@ -1,0 +1,249 @@
+﻿@model ServiceInput
+@using (Html.BeginForm("Create", "Service", FormMethod.Post, new { @class = "ajaxForm formLoad", @novalidate = "novalidate" }))
+{
+    @Html.Partial("_ValSum")
+    @Html.ValidateSummaryEagle()
+    @Html.HiddenFor(s => s.CustomerId)
+    @Html.HiddenFor(s => s.Id)
+    @Html.HiddenFor(s => s.CreatedUserId)
+    @Html.HiddenFor(s => s.CreatedDate)
+    @Html.HiddenFor(s => s.RowId)
+    <div class='card' id='serviceCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>Servis Bilgileri</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-minus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase show'>
+            <div class='card-body' id='serviceCardBody'>
+                <div class="form-body">
+                    <h4 class="form-section"><i class="ft-user"></i>Müşteri Bilgileri</h4>
+                    <div class="form-group row">
+                        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Müşteri</label>
+                        <div class="col-sm-8">
+                            @if (Model.Id > 0)
+                            {
+                                @Html.Awe().TextBoxFor(s => s.CustomerName).ReadonlyInput()
+                            }
+                            else
+                            {
+                                @(Html.Awe().AutocompleteFor(s => s.CustomerName).PropId(s => s.CustomerId).Url(Url.Content("/Data/CustomerAutoComplete")).Placeholder("Müşteri Adı").CssClass("w-100"))
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Lokasyon</label>
+                        <div class="col-md-8">
+                            @if (Model.Id > 0)
+                            {
+                                @Html.HiddenFor(s => s.LocationId)
+                                @Html.Awe().TextBoxFor(s => s.LocationName).ReadonlyInput()
+                            }
+                            else
+                            {
+                                @Html.Awe().AjaxRadioList("LocationId").Url(Url.Content("/Data/GetLocationByCustomer")).Odropdown().Parent("CustomerId")
+                            }
+                        </div>
+                    </div>
+                    @Html.EditorFor(s => s.ResponsibleName)
+                    @Html.EditorFor(s => s.ResponsiblePhone)
+                    <h4 class="form-section"><i class="ft-clipboard"></i>Servis Bilgileri</h4>
+                    @Html.EditorFor(s => s.ServiceCategoryId)
+                    @Html.EditorFor(s => s.Status)
+                    @Html.EditorFor(s => s.Priority)
+                    @Html.EditorFor(s => s.ServiceDate)
+                    @Html.EditorFor(s => s.Description)
+                    @Html.EditorFor(s => s.Process)
+                    <div class="form-group row">
+                        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Ücret</label>
+                        <div class="col-sm-4">
+                            @Html.Awe().TextBoxFor(s => s.Price)
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Awe().AjaxRadioListFor(s => s.PriceCurrency).Url(Url.Content("/Data/GetCurrency")).Odropdown()
+                        </div>
+                    </div>
+                    <h4 class="form-section"><i class="ft-user"></i>Personel ve Araç Bilgileri</h4>
+                    <div class="form-group row">
+                        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Personeller</label>
+                        <div class="col-sm-8">
+                            @(Html.Awe().AjaxCheckboxList("ServicePersons").Multiselect().Url(Url.Content("Data/GetTechnicAppUserMulti")))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Araçlar</label>
+                        <div class="col-sm-8">
+                            @(Html.Awe().AjaxCheckboxList("ServiceVehicles").Multiselect().Url(Url.Content("Data/GetVehicleMulti")))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='card' id='printerCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>Yazıcı Bilgileri</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-minus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase show'>
+            <div class='card-body' id='printerCardBody'>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" id="addNewPrinterBtn" data-toggle="modal" data-target="#addNewPrinterModal" role="tab" aria-selected="false"><i class="fa fa-plus"></i> Yeni Yazıcı Ekle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" id="shortPrinterContentBtn" data-toggle="tab" aria-controls="shortPrinterContent" href="#shortPrinterContent" role="tab" aria-selected="true"><i class="fa fa-play"></i> Özet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="printer-cards-btn" data-toggle="tab" aria-controls="printer-cards" href="#printer-cards" role="tab" aria-selected="false"><i class="fa fa-flag"></i> Detay</a>
+                    </li>
+                </ul>
+                <div class="tab-content px-1 pt-1">
+                    <div class="tab-pane active" id="shortPrinterContent" role="tabpanel" aria-labelledby="baseIcon-tab3">
+                        @Html.Partial("_PrintersTable", Model)
+                    </div>
+                    <div class="tab-pane" id="printer-cards" role="tabpanel" aria-labelledby="baseIcon-tab1">
+                        @Html.Partial("_Printers", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='card' id='stockCard'>
+        <div class='card-header'>
+            <h4 class='card-title'>Ürün Bilgileri</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-minus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase show'>
+            <div class='card-body' id='stockCardBody'>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" id="addNewProductBtn" data-toggle="modal" data-target="#addNewProductModal" role="tab" aria-selected="false"><i class="fa fa-plus"></i> Yeni Ürün Ekle</a>
+                    </li>
+                </ul>
+                <div class="tab-content px-1 pt-1">
+                    <div class="tab-pane active" id="shortPrinterContent" role="tabpanel" aria-labelledby="baseIcon-tab3">
+                        @Html.Partial("_StockTable", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-actions pull-right">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-check-square-o"></i> Kaydet
+        </button>
+    </div>
+}
+@Html.Partial("_NewPrinterModal")
+@Html.Partial("_NewProductModal")
+
+<script>
+    $(document).ready(function () {
+        initDropDowns();
+        initForm();
+        var input = $('.field-validation-error:first'); //TO DO javascript detaylı yazılacak
+        if (input) {
+            input.focus();
+        }
+        showModelErrors();
+    })
+    function showModelErrors() {
+        var errors = [];
+        @foreach (var error in ViewData.ModelState.Values.Where(s => s.Errors.Any()))
+        {
+            foreach (var item in error.Errors)
+            {
+            @:errors.push('@item.ErrorMessage')
+            }
+        }
+        showErrorMessagesOnValidate(errors);
+        if ($("#validationDiv").is(':visible')) {
+        $("#validationDiv")[0].scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" }); //ControlHelper'dan geliyor
+        }
+    }
+    $("#LocationId").change(function () {
+        if ($("#ResponsibleName").val().length == 0 && $("#ResponsiblePhone").val().length == 0)
+            setResponsibleInfo($(this).val());
+    })
+    function setResponsibleInfo(locationId) {
+        $.ajax({
+            url: "/Data/GetResponsibleByLocation/?parent=" + locationId,
+            type: "POST",
+            success: function (data) {
+                $("#ResponsibleName").val(data.ResponsibleName).change();
+                $("#ResponsiblePhone").val(data.ResponsiblePhone).change();
+            },
+            error: function (ex) {
+                awem.notif(ex, 3000, 'o-err');
+            }
+        });
+    }
+
+    function initDropDowns() {
+        $.ajax({
+            url: '/Data/GetProductForSelect2',
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $("#newProductId").select2({
+                data: data,
+                width: '100%',
+                dropdownParent:"#addNewProductModal"
+            });
+        });
+        $.ajax({
+            url: '/Data/GetPrinterByLocationForSelect2/?parent=' + $("#LocationId").val(),
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $("#newPrinterId").select2({
+                data: data,
+                width: '100%',
+                dropdownParent:"#addNewPrinterModal"
+            });
+        })
+
+        $.ajax({
+            url: '/Data/GetServicePrinterStatusForSelect2',
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $(".printerServiceStatusSelect").select2({
+                data: data,
+                width: '100%',
+                dropdownParent:"#addNewPrinterModal"
+            });
+        })
+
+        $.ajax({
+            url: '/Data/GetPrinterServiceTypeForSelect2',
+            dataType: 'json',
+            type: 'GET'
+        }).done(function (data) {
+            $(".printerServiceTypeSelect").select2({
+                data: data,
+                width: '100%',
+                dropdownParent:"#addNewPrinterModal"
+            });
+        })
+    }
+</script>
+@Html.Awe().Form().FormClass("ajaxForm").FillFormOnContent(true).Success("ajaxFormCompleted")

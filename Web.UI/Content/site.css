@@ -1,0 +1,172 @@
+﻿body, ul, fieldset, textarea, img, legend, button, i, pre {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body {
+    background-color: #fafafa;
+    font-family: Roboto, "Segoe UI", Oxygen-Sans, Ubuntu, Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+    line-height: 1.42857143;
+    font-size: 15px;
+    color: #262626;
+}
+
+.awe-col, .elabel, .menu, h1, h2, h3, b {
+    font-family: "Segoe UI", Oxygen-Sans, Ubuntu, Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
+}
+
+h1, h2, h3 {
+    font-size: 1.5em;
+    color: #444;
+    font-weight: normal;
+}
+
+.main {
+    margin: 1em;
+}
+
+input[type="text"], textarea {
+    margin: 0;
+    padding: 5px 8px 6px;
+    color: #333;
+    border: 1px solid #D5D5D5;
+    border-top-color: #B5B5B5;
+    border-radius: 1px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+    width: 200px;
+}
+
+/* Styles for validation helpers*/
+@media (max-width: 767px) {
+    .field-validation-error {
+        display: block;
+    }
+}
+
+.field-validation-error, .validation-summary-errors {
+    color: #ff0000;
+}
+
+/*.validation-summary-errors ul
+{
+    list-style: none;
+}*/
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    background-color: #ffeeee;
+}
+
+.editbtn, .delbtn, .editnst, .delnst {
+    padding: .2em .3em;
+}
+
+/* grid btns */
+.editbtn, .delbtn, .editnst, .delnst {
+    padding: .2em .3em;
+}
+
+.ico-crud {
+    background-image: url(editdel.png);
+}
+
+.ico-edit, .ico-del {
+    display: block;
+    overflow: hidden;
+    height: 18px;
+    width: 18px;
+    background-repeat: no-repeat;
+}
+
+.ico-edit {
+    background-position: 0 -1px;
+}
+
+.ico-del {
+    background-position: -17px -1px;
+}
+/* grid btns */
+
+/* form layout */
+.efield {
+    padding: 5px 0;
+}
+
+.elabel {
+    text-align: right;
+    width: 150px;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    vertical-align: top;
+    margin-top: 1px;
+    padding-right: 3px;
+}
+
+    .elabel label {
+        font-weight: 600;
+    }
+
+@media (max-width: 480px) {
+    .elabel {
+        text-align: left;
+        display: block;
+    }
+}
+
+.einput {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    vertical-align: top;
+}
+
+    .einput .o-dd, .einput .awe-datepicker-field, .einput .awe-lookup-field, .einput, .einput .awe-multilookup-field, .einput .etxt {
+        min-width: 15em;
+    }
+
+.awe-popup .einput .awe-multilookup-field .awe-display {
+    max-height: 7.3em;
+    overflow-y: auto;
+}
+
+/* misc */
+.bar {
+    padding: 5px 0;
+}
+
+.mbtn {
+    padding: 0.4em 0.9em;
+}
+
+
+/*Form içerik*/
+div.form-group label {
+    text-align: right;
+}
+
+/* Styles for validation helpers*/
+@media (max-width: 767px) {
+    div.form-group label {
+        text-align: left;
+    }
+}
+
+.delDiv {
+    padding: 0 3em;
+    line-height: 6;
+    font-size: 16px;
+    font-weight: 700;
+    height: 100px;
+    background-image: url(/Content/icons/high_priority.svg);
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-size: 200px 100px;
+}

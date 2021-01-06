@@ -1,0 +1,71 @@
+﻿@model LoginInput
+@{
+    Layout = "~/Views/Shared/_LayoutAccount.cshtml";
+}
+<div class="limiter">
+    <div class="container-login100" style="background-image: url('images/img-01.jpg');">
+        <div class="wrap-login100 p-t-190 p-b-30">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "m-login__form m-form", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="login100-form-avatar">
+                    <img src="~/Assets/images/logo/EagleLogo400-White.png" alt="AVATAR">
+                </div>
+                <span class="login100-form-title p-t-20 p-b-45">
+                    Panel
+                </span>
+                <div class="text-center m-b-20">
+                    @Html.ValidationSummary(true, "", new { @class = "text-light" })
+                </div>
+                <div class="text-center m-b-10">
+                    @Html.ValidationMessageFor(p => p.Email, "", new { @class = "text-light" })
+                </div>
+                <div class="wrap-input100 validate-input m-b-10" data-validate="Username is required">
+                    @Html.TextBoxFor(p => p.Email, new { @class = "input100", placeholder = "E-Posta", autocomplete = "off", id = "username" })
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-user"></i>
+                    </span>
+                </div>
+                <div class="text-center m-b-10">
+                    @Html.ValidationMessageFor(p => p.Password, "", new { @class = "text-light" })
+                </div>
+                <div class="wrap-input100 validate-input m-b-10" data-validate="Password is required">
+                    @Html.TextBoxFor(p => p.Password, new { @class = "input100", placeholder = "Parola", type = "password", autocomplete = "off", id = "password" })
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-lock"></i>
+                    </span>
+                </div>
+                <div class="form-group m-form__group">
+                    <div style="text-align:center;">
+                        <img src="/Account/CreateImage" style="border-radius:10%;cursor:pointer;width:200px;height:60px;" onclick="reloadR()" class="captcha" title="Yenileme için tıklayın" /><br />
+                        <span class='text-info'>Yenileme için resmin üstüne tıklayın</span>
+                    </div>
+                    @Html.TextBoxFor(p => p.Code, new { @class = "input100", autocomplete = "off", placeholder = "Güvenlik kodunu girin", value = "" })
+                    @Html.ValidationMessageFor(p => p.Code, "", new { @class = "text-light" })
+                </div>
+                <div class="container-login100-form-btn p-t-10">
+                    <button class="login100-form-btn">
+                        Giriş Yap
+                    </button>
+                </div>
+                <div class="text-center w-full p-t-25 p-b-230">
+                    <a href="/Account/ForgotPassword" class="txt1">
+                        Şifremi unuttum
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    function reloadR() {
+        $(".captcha").removeAttr("src").attr("src", "/Account/CreateImage?Id=" + Math.floor((Math.random() * 100) + 1));
+    }
+    function showPass() {
+        var x = document.getElementById("username");
+        if (x.type === "password") x.type = "text";
+        else x.type = "password";
+    }
+</script>

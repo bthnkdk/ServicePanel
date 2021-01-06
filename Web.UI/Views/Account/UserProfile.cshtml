@@ -1,0 +1,85 @@
+﻿@model AppUser
+@{
+    Layout = "~/Views/Shared/_LayoutAccount.cshtml";
+}
+@using (Html.Page())
+{
+   
+    using (Html.PageBody())
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="m-portlet m-portlet--default m-portlet--head-solid-bg">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <span class="m-portlet__head-icon">
+                                    <i class="fa fa-info-circle"></i>
+                                </span>
+                                <h3 class="m-portlet__head-text text-primary">
+                                    Kişisel Bilgiler
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-portlet__body">
+                        <form>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label font-weight-bold leftL">Ad</label>
+                                <div class="col-md-9">
+                                    <input type="text" readonly class="form-control-plaintext" value="@Model.Firstname">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label font-weight-bold leftL">Soyad</label>
+                                <div class="col-md-9">
+                                    <input type="text" readonly class="form-control-plaintext" value="@Model.Lastname">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label font-weight-bold leftL">E-Posta</label>
+                                <div class="col-md-9">
+                                    <input type="text" readonly class="form-control-plaintext" value="@Model.Username">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label font-weight-bold leftL">Telefon</label>
+                                <div class="col-md-9">
+                                    <input type="text" readonly class="form-control-plaintext" value="@Model.Mobile">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label font-weight-bold leftL">Görev</label>
+                                <div class="col-md-9">
+                                    <input type="text" readonly class="form-control-plaintext" value="@Model.Title.Name">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="m-portlet m-portlet--warning m-portlet--head-solid-bg">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <span class="m-portlet__head-icon">
+                                    <i class="fa fa-key"></i>
+                                </span>
+                                <h3 class="m-portlet__head-text">
+                                    Parola Bilgileri
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-portlet__body">
+                        @Html.Partial("UpdatePassword", new UpdatePasswordInput())
+                    </div>
+                    <div class="m-portlet__foot text-danger">
+                        Yeni parola belirlendiğinde otomatik çıkış yapılır.
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

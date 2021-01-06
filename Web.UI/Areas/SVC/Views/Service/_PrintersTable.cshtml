@@ -1,0 +1,59 @@
+﻿@model ServiceInput
+<div class="table-responsive">
+    <table class="table mb-0 table-bordered" id="printer-table">
+        <thead>
+            <tr>
+                <th>Cihaz No</th>
+                <th>Problem</th>
+                <th>İşlem</th>
+                <th>Durum</th>
+                <th>Bakım</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.ServicePrinters.Count; i++)
+            {
+                <tr>
+                    <td width="15px" scope="row">@Model.ServicePrinters[i].PrinterId</td>
+                    <td>@Model.ServicePrinters[i].Description</td>
+                    <td>@Model.ServicePrinters[i].Process</td>
+                    <td class="@ConstHelper.StatusClass(Model.ServicePrinters[i].Status)" width="35px">@ConstHelper.StatusName(Model.ServicePrinters[i].Status)</td>
+                    <td width="15px">@(Model.ServicePrinters[i].IsMaintenanceOk ? "Yapıldı" : "Yapılmadı")</td>
+                    <td width="15px">
+                        <a class="btn btn-outline-success" data-index="@Model.ServicePrinters[i].PrinterId" onclick="focusToPrinter(this)">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script id="printer-row-template" type="text/x-handlebars-template">
+    <tr>
+        <td width="15px">{{printer.printerId}}</td>
+        <td>{{printer.description}}</td>
+        <td width="15px">{{printer.process}}</td>
+        <td width="15px" class="{{ServicePrinterStatusClass printer.status}}">{{ServicePrinterStatus printer.status}}</td> 
+        <td>{{ServicePrinterMaintenance printer.maintenance}}</td>
+        <td>
+            <button type="button" class="btn btn-outline-success" data-index="{{printer.printerId}}" onclick="focusToPrinter(this)">
+                <i class="fa fa-eye"></i>
+            </button>
+        </td>
+    </tr>
+</script>
+<script>
+    function focusToPrinter(btn) {
+        var id = btn.getAttribute("data-index");
+
+        $("#printer-cards-btn").click();
+        if (!$("#printer-" + id + "-Content").hasClass("show"))
+            $("#printer-" + id + "-CardShowBtn").click();
+
+        setTimeout(function () {
+            $("#printer-" + id + "-Card")[0].scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }, 250);
+    }
+</script>

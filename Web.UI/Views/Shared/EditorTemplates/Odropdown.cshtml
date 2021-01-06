@@ -1,0 +1,10 @@
+@{
+    Layout = "_FieldLayout.cshtml";
+    ViewData.ModelMetadata.AdditionalValues.Add("__idpostfix", "-awed");
+    var values = ViewData.ModelMetadata.AdditionalValues;
+}
+@(Html.Awe().AjaxRadioList("").Odropdown())
+@if (values.ContainsKey("Info"))
+{
+    <small class="form-text text-muted">@Html.Raw(values["Info"].ToString())</small>
+}

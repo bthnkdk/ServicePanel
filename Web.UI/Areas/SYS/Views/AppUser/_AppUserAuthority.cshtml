@@ -1,0 +1,61 @@
+﻿@model AppUserAuthorityInput
+@{
+    var authCodeList = ConstHelper.AuthCodeList();
+    var authActionCodeList = ConstHelper.AuthActionCodeList();
+    int index = 0;
+}
+@Html.Partial("_ValSum")
+<div>
+    <div style="float:left;">
+        <input type="checkbox" name="checkAll" id="checkAll" onClick="checkAllByClass('chkbk authCodes',this.checked);" />
+        <label for="checkAll">Hepsini Seç/Seçme</label>
+    </div>
+</div>
+<div style="float:right;">
+    <span class="text-primary font-weight-bold">@Model.AppUserName</span>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(o => o.AppUserId)
+    <table class="table table-hover table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Modül</th>
+                @foreach (var authActionCode in authActionCodeList)
+                {
+                    <th style="text-align:center;"> @authActionCode.Value </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var authCode in authCodeList.OrderBy(p => p.Value))
+            {
+                <tr>
+                    <td class="font-weight-bold">
+                        @authCode.Value
+                    </td>
+                    @foreach (var authActionCode in authActionCodeList)
+                    {
+                        string code = string.Format("{0}.{1}", authCode.Key, authActionCode.Key);
+                        string chckd = string.Empty;
+                        if (Model.Codes != null)
+                        {
+                            foreach (var codex in Model.Codes)
+                            {
+                                if (codex.AuthCodeId == authCode.Key && codex.Access == authActionCode.Key)
+                                {
+                                    chckd = "checked='checked'";
+                                }
+                            }
+                        }
+                        <td style="text-align:center;">
+                            <input type="hidden" id="Codes_@(index)_Access" name="Codes[@index].Access" value="@authActionCode.Key" />
+                            <input type="checkbox" class="chkbk authCodes" id="Codes_@(index)_AuthCodeId" name="Codes[@index].AuthCodeId" @chckd value="@authCode.Key" />
+                        </td>
+                        index += 1;
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

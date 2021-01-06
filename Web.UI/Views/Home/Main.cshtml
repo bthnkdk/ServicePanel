@@ -1,0 +1,26 @@
+﻿@model UserInfo
+
+@switch (Model.TitleId)
+{
+    case ConstHelper.Title.YONETICI:
+        @Html.Partial("_Yonetici");
+        break;
+    case ConstHelper.Title.PLANLAMACI:
+        @Html.Partial("_Planlamaci");
+        break;
+    case ConstHelper.Title.SATIS_PERSONEL:
+        @Html.Partial("_SatisPersonel");
+        break;
+    case ConstHelper.Title.SATIS_YONETICI:
+        @Html.Partial("_SatisYonetici");
+        break;
+    case ConstHelper.Title.TEKNIK_PERSONEL:
+        @Html.Partial("_TeknikPersonel");
+        break;
+    case ConstHelper.Title.TEKNIK_YONETICI:
+        @Html.Partial("_TeknikYonetici");
+        break;
+    default:
+        break;
+}
+

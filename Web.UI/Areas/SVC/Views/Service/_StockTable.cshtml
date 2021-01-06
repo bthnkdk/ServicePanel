@@ -1,0 +1,164 @@
+﻿@model ServiceInput
+@{
+    var userId = WebUserManager.GetUserInfo().Id;
+}
+<div class="table-responsive">
+    <table class="table mb-0 table-bordered" id="product-table">
+        <thead>
+            <tr>
+                <th>Ürün</th>
+                <th>Adet</th>
+                <th>Yazıcı No</th>
+                <th>Durum</th>
+                <th>Teslimat</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.ServiceStocks.Count; i++)
+            {
+            <tr id="ServiceStockRow_@Model.ServiceStocks[i].StockId">
+                <td width="35%">
+                    <input type="hidden" class="stockId" name="ServiceStocks[@i].Id" value="@Model.ServiceStocks[i].Id" />
+                    <input type="hidden" class="stockId" name="ServiceStocks[@i].StockId" value="@Model.ServiceStocks[i].StockId" />
+                    <input type="hidden" class="stockId" name="ServiceStocks[@i].Status" value="@Model.ServiceStocks[i].Status" />
+                    <input type="hidden" name="ServiceStocks[@i].IsDeleted" id="ServiceStocks_@(Model.ServiceStocks[i].StockId)_IsDeleted" value="@Model.ServiceStocks[i].IsDeleted" />
+                    <label>@Model.ServiceStocks[i].StockName</label>
+                </td>
+                <td width="15%">
+                    <input type="number" class="form-control" value="@Model.ServiceStocks[i].Count" name="ServiceStocks[@i].Count" @(Model.ServiceStocks[i].Status == ConstHelper.ServiceStatus.TAMAMLANDI ? "readonly" : "") />
+                </td>
+                <td>
+                    <input type="number" class="form-control" value="@Model.ServiceStocks[i].PrinterId" name="ServiceStocks[@i].PrinterId" @(Model.ServiceStocks[i].Status == ConstHelper.ServiceStatus.TAMAMLANDI ? "readonly" : "") />
+                </td>
+                <td>
+                    <label>@Model.ServiceStocks[i].StatusName</label>
+                </td>
+                @if (Model.ServiceStocks[i].Status == ConstHelper.ServiceStockStatus.ZIMMETLENDI && Model.ServicePersons.Contains(userId))
+                {
+                    <td>
+                        <input type="checkbox" name="ServiceStocks[@i].IsDelivered" /> Teslim Edildi
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="deleteProduct(this)" data-product-id="@Model.ServiceStocks[i].StockId">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                }
+                @if (Model.ServiceStocks[i].Status == ConstHelper.ServiceStockStatus.ZIMMETLENDI && Model.ServicePersons.Contains(userId))
+                {
+                    <td>
+                        <input type="hidden" value="@Model.ServiceStocks[i].IsDelivered" name="ServiceStocks[@i].IsDelivered" />
+                        <input type="checkbox" disabled value="@Model.ServiceStocks[i].IsDelivered" name="ServiceStocks[@i].IsDelivered" /> Teslim Edildi
+                    </td>
+                    @*@if ()*@
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="deleteProduct(this)" data-product-id="@Model.ServiceStocks[i].StockId">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script id="product-row-template" type="text/x-handlebars-template">
+    <tr id="ServiceStockRow_{{product.ProductId}}">
+        <td width="35%">
+            <input type="hidden" name="ServiceStocks[{{index}}].StockId" class="stockId" value="{{product.ProductId}}" />
+            <input type="hidden" name="ServiceStocks[{{index}}].Status" class="stockId" value="{{product.Status}}" />
+            <input type="hidden" name="ServiceStocks[{{index}}].IsDeleted" id="ServiceStocks_{{product.ProductId}}_IsDeleted" value="0" />
+            <label>{{product.StockName}}</label>
+        </td>
+        <td width="15%">
+            <input type="number" class="form-control" value="{{product.Count}}" name="ServiceStocks[{{index}}].Count" />
+        </td>
+        <td width="15%">
+            <input type="number" class="form-control" value="{{product.PrinterId}}" name="ServiceStocks[{{index}}].PrinterId" />
+        </td>
+        <td>
+            <label>{{product.StatusName}}</label>
+        </td>
+        <td>
+            <input type="checkbox" disabled name="ServiceStocks[{{index}}].IsDelivered" /> Teslim Edildi
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger" onclick="deleteProduct(this)" data-product-id="{{product.ProductId}}">
+                <i class="fa fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</script>
+<script>
+    function addProduct() {
+        var index = $('#product-table tbody tr').length;
+        var productId = $("#newProductId").val();
+        var productName = $("#newProductId :selected").text();
+        var count = $("#newProductCount").val();
+        var productPrinterId = $("#newProductPrinterId").val();
+
+        var productRowTemplateScript = $("#product-row-template").html();
+        var productRowTemplate = Handlebars.compile(productRowTemplateScript);
+
+        if (!productId) {
+            showError("Lütfen ürün seçiniz");
+            return;
+        }
+
+        if (isProductExists(productId)) {
+            return;
+        }
+        var product = {
+            ProductId: productId,
+            StockName: productName,
+            Count: count,
+            StatusName: "Depo çıkışı bekleniyor",
+            Status: @ConstHelper.ServiceStockStatus.DEPOCIKISIBEKLENIYOR,
+            PrinterId: productPrinterId
+        }
+        if (index == 0)
+            $('#product-table tbody').html(productRowTemplate({ "product": product, "index": index }));
+        else
+            $('#product-table tbody tr:last').after(productRowTemplate({ "product": product, "index": index }));
+
+
+        showSuccess("Ürün eklendi");
+        $("#addNewProductModal").modal('toggle');
+
+        $("#newProductId").val("").change();
+        $("#newProductCount").val("");
+        $("#newProductPrinterId").val("");
+    }
+
+    function isProductExists(id) {
+        debugger
+        var product = $("input[value='" + id + "'][class='stockId']");
+        if (product.length) {
+            if ($("#ServiceStocks_" + id + "_IsDeleted").val() == 1) {
+                if (confirm("Eklemek istediğiniz ürün bu servisten silinmiş. Aktif hale getirmek istiyor musunuz ?")) {
+                    $("#ServiceStocks_" + id + "_IsDeleted").val(0);
+                    $("#ServiceStockRow_" + id).removeClass("d-none");
+                    showSuccess("Ürün eklendi");
+                    $("#addNewProductModal").modal('toggle');
+
+                    $("#newProductId").val("").change();
+                    $("#newProductCount").val("");
+                    $("#newProductPrinterId").val("");
+                }
+            }
+            else
+                showError("Bu ürün zaten mevcut");
+            return true;
+        }
+        return false;
+    }
+
+    function deleteProduct(data) {
+        var id = $(data).attr("data-product-id");
+        if (confirm('Ürünü silmek istediğinize emin misiniz ?')) {
+            $("#ServiceStocks_" + id + "_IsDeleted").val(1);
+            $("#ServiceStockRow_" + id).addClass("d-none");
+        }
+    }
+</script>

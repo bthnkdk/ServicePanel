@@ -1,0 +1,44 @@
+﻿@model VisitInput
+
+@using (Html.Awe().BeginContext())
+{
+    @Html.HiddenFor(s => s.Id)
+    @Html.HiddenFor(s => s.CreatedUserId)
+    @Html.HiddenFor(s => s.CreatedDate)
+    <div class="form-body">
+        <h4 class="form-section"><i class="ft-user"></i> Temel Bilgiler</h4>
+        <div class="form-group row">
+            <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Müşteri</label>
+            <div class="col-md-8">
+                @if (Model.CustomerId < 1)
+                {
+                    @Html.Awe().AjaxRadioList("CustomerId").Url(Url.Content("/Data/GetCustomer")).Odropdown()
+                }
+                else
+                {
+                    @Html.Awe().AjaxRadioList("CustomerId").Url(Url.Content("/Data/GetCustomer")).Odropdown().Enabled(false)
+                }
+            </div>
+        </div>
+        @Html.EditorFor(s => s.VisitTypeId)
+        @Html.EditorFor(s => s.VisitCategoryId)
+        @Html.EditorFor(s => s.AppUserId)
+        <h4 class="form-section"><i class="ft-clipboard"></i> Detaylı Bilgiler</h4>
+        @Html.EditorFor(s => s.VisitDate)
+        @Html.EditorFor(s => s.Subject)
+        @Html.EditorFor(s => s.Status)
+        <div class="form-group row">
+            <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Son Aksiyon</label>
+            <div class="col-md-8">
+                @Html.TextArea("LastAct", new { rows = 8, @class = "form-control form-control-sm", @readonly = "readonly" })
+            </div>
+        </div>
+        @if (Model.Id > 0)
+        {
+            <h4 class="form-section"><i class="ft-alert-circle"></i> Aksiyon</h4>
+            @Html.EditorFor(s => s.VisitLog.Description)
+            @Html.EditorFor(s => s.VisitLog.Description2)
+        }
+    </div>
+    <button type="submit" class="btn btn-primary btn-min-width mr-1 mb-1 pull-right"><i class="fa fa-save"></i> Kaydet</button>
+}

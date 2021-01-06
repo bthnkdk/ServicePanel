@@ -1,0 +1,8 @@
+﻿@model VehicleInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    @Html.EditorFor(s => s.Name)
+    @Html.EditorFor(s => s.Plate)
+    @Html.EditorFor(s => s.AppUserId)
+}

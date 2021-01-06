@@ -1,0 +1,52 @@
+﻿[
+  {
+    "holidayName": "Yılbaşı",
+    "start": "2019-01-01 01:01:01",
+    "end": "2019-01-01 01:01:01"
+  },
+  {
+    "holidayName": "Ulusal Egemenlik ve Çocuk Bayramı",
+    "start": "2019-04-23 01:01:01",
+    "end": "2019-04-23 01:01:01"
+  },
+  {
+    "holidayName": "İşçi Bayramı",
+    "start": "2019-05-01 01:01:01",
+    "end": "2019-05-01 01:01:01"
+  },
+  {
+    "holidayName": "Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+    "start": "2019-05-19 01:01:01",
+    "end": "2019-05-19 01:01:01"
+  },
+  {
+    "holidayName": "Ramazan Bayramı",
+    "start": "2019-06-03 01:01:01",
+    "end": "2019-06-06 01:01:01"
+  },
+  {
+    "holidayName": "Demokrasi ve Direnme Hakkı Günü",
+    "start": "2019-07-15 01:01:01",
+    "end": "2019-07-15 01:01:01"
+  },
+  {
+    "holidayName": "Kurban Bayramı",
+    "start": "2019-08-10 01:01:01",
+    "end": "2019-08-14 01:01:01"
+  },
+  {
+    "holidayName": "Zafer Bayramı",
+    "start": "2019-08-30 01:01:01",
+    "end": "2019-08-30 01:01:01"
+  },
+  {
+    "holidayName": "Cumhuriyet Bayramı Arefesi",
+    "start": "2019-10-28 01:01:01",
+    "end": "2019-10-28 01:01:01"
+  },
+  {
+    "holidayName": "Cumhuriyet Bayramı",
+    "start": "2019-10-29 01:01:01",
+    "end": "2019-10-29 01:01:01"
+  }
+]

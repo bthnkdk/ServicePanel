@@ -1,0 +1,14 @@
+@{
+    Layout = "_FieldLayout.cshtml";
+    var values = ViewData.ModelMetadata.AdditionalValues;
+    int rows = 8;
+    if (values.ContainsKey("rows"))
+    {
+        rows = (int)values["rows"];
+    }
+}
+@Html.TextArea("", new { rows = rows, @class = "form-control form-control-sm" })
+@if (values.ContainsKey("Info"))
+{
+    <small class="form-text text-muted">@Html.Raw(values["Info"].ToString())</small>
+}

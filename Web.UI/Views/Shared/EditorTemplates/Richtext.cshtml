@@ -1,0 +1,27 @@
+﻿@model string
+@{
+    Layout = "_FieldLayout.cshtml";
+    var values = ViewData.ModelMetadata.AdditionalValues;
+}
+@Html.TextArea("", Model, new { @class = "form-control form-control-sm" })
+@if (values.ContainsKey("Info"))
+{
+    <small class="form-text text-muted">@Html.Raw(values["Info"].ToString())</small>
+}
+<script type="text/javascript">
+    (function () {
+        var id = "@(ViewData.TemplateInfo.GetFullHtmlFieldId(string.Empty))";
+        CKEDITOR.replace(id, {
+			toolbarGroups: [
+				{"name":"basicstyles","groups":["basicstyles"]},
+				{"name":"links","groups":["links"]},
+				{"name":"paragraph","groups":["list","blocks"]},
+				{"name":"styles","groups":["styles"]}
+			],
+			removeButtons: 'Subscript,Superscript,Anchor,Styles,Specialchar'
+        });
+        $("#" + id).closest('form').on("submit", function () {
+             fckCheck();
+        });
+    })();
+</script>

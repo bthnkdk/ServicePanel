@@ -1,0 +1,23 @@
+﻿@model ServiceInput
+@using (Html.PageHead("Servis Listesi"))
+{
+    @Html.BreadCrumb("Servis Listesi", false, "/#/Service/Index");
+    @Html.BreadCrumb(Model.Id > 0 ? "Servis " + Model.Id : "Yeni Servis");
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @Html.Partial("_Form", Model)
+    </div>
+</div>
+
+
+<script>
+    var serviceId =@Model.Id;
+    $(document).ready(function () {
+        $('.ajaxForm').bind('invalid-form.validate', function (form, validator) {
+            showErrorMessagesOnValidate(validator.errorList);
+        });
+        initForm();
+    });
+</script>

@@ -1,0 +1,244 @@
+﻿@model ServiceInput
+<style>
+    .dCHB {
+        font-size: 25px;
+    }
+</style>
+@for (int i = 0; i < Model.ServicePrinters.Count; i++)
+{
+    <div class='card box-shadow-0 @(Model.ServicePrinters[i].Status == @ConstHelper.ServiceStatus.ISLEMDE ? "border-info":"border-success")' id="printer-@(Model.ServicePrinters[i].PrinterId)-Card">
+        <div class='card-header inverse @ConstHelper.StatusClass(Model.ServicePrinters[i].Status)'>
+            <h4 class='card-title @(Model.ServicePrinters[i].Status==0? "black":"white")'>@Model.ServicePrinters[i].PrinterId | @Model.ServicePrinters[i].PrinterName</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements @(Model.ServicePrinters[i].Status==0? "black":"white")'>
+                <ul class='list-inline mb-0' id="printer-@(Model.ServicePrinters[i].PrinterId)-CardBtns">
+                    <li><a data-action='collapse' id="printer-@(Model.ServicePrinters[i].PrinterId)-CardShowBtn"><i class='ft-plus dCHB'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize dCHB'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase collapse' id="printer-@(Model.ServicePrinters[i].PrinterId)-Content">
+            <div class='card-body' id="printer_@(Model.ServicePrinters[i].PrinterId)_Body">
+                @Html.HiddenFor(s => s.ServicePrinters[i].PrinterId, new { @class = "printerId" })
+                @Html.HiddenFor(s => s.ServicePrinters[i].ServiceId)
+                @Html.HiddenFor(s => s.ServicePrinters[i].Id)
+                @Html.HiddenFor(s => s.ServicePrinters[i].CounterId)
+                <input type="hidden" id="ServicePrinters_@(Model.ServicePrinters[i].PrinterId)_IsDeleted" value="0" name="ServicePrinters[@i].IsDeleted" />
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Durum</label>
+                    <div class="col-md-8">
+                        @Html.Awe().AjaxRadioListFor(s => s.ServicePrinters[i].Status).Url(Url.Content("/Data/GetServicePrinterStatus")).Odropdown().Value(Model.ServicePrinters[i].Status)
+                        @Html.ValidationMessageFor(s => s.ServicePrinters[i].Status)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">İşlem Kategori</label>
+                    <div class="col-md-8">
+                        @Html.Awe().AjaxRadioListFor(s => s.ServicePrinters[i].PrinterServiceTypeId).Url(Url.Content("/Data/GetPrinterServiceType")).Odropdown().Value(Model.ServicePrinters[i].PrinterServiceTypeId)
+                        @Html.ValidationMessageFor(s => s.ServicePrinters[i].PrinterServiceTypeId)
+                    </div>
+                </div>
+                @Html.EditorFor(s => s.ServicePrinters[i].Description)
+                @Html.EditorFor(s => s.ServicePrinters[i].Process)
+                @Html.EditorFor(s => s.ServicePrinters[i].Mono)
+                @Html.EditorFor(s => s.ServicePrinters[i].Color)
+                @Html.EditorFor(s => s.ServicePrinters[i].IsMaintenanceOk)
+                <div class="form-actions pull-right">
+                    <button type="button" onclick="deletePrinter(this)" data-printer-id="@Model.ServicePrinters[i].PrinterId" class="btn btn-danger">
+                        <i class="fa fa-trash-o"></i> Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script id="printer-card-template" type="text/x-handlebars-template">
+    <div class='card box-shadow-0 border-info' id="printer-{{printer.printerId}}-Card">
+        <div class='card-header inverse @ConstHelper.StatusClass(ConstHelper.ServiceStatus.ISLEMDE)'>
+            <h4 class='card-title white'>{{printer.printerId}} | {{printer.printerName}}</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements white'>
+                <ul class='list-inline mb-0' id="printer-{{printer.printerId}}-CardBtns">
+                    <li><a data-action='collapse' id="printer-{{printer.printerId}}-CardShowBtn"><i class='ft-plus dCHB'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize dCHB'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase collapse' id="printer-{{printer.printerId}}-Content">
+            <div class='card-body' id="printer-{{printer.printerId}}-Body">
+                <input type="hidden" name="ServicePrinters[{{index}}].IsDeleted" id="ServicePrinters_{{printer.printerId}}_IsDeleted" value="0" />
+                <input type="hidden" class="printerId" name="ServicePrinters[{{index}}].PrinterId" value="{{printer.printerId}}" />
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Durum</label>
+                    <div class="col-md-8">
+                        <select name="ServicePrinters[{{index}}].Status" class="printerServiceStatusSelect form-control" id="ServicePrinters_{{index}}_Status"></select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">İşlem Kategori</label>
+                    <div class="col-md-8">
+                        <select name="ServicePrinters[{{index}}].PrinterServiceTypeId" class="printerServiceTypeSelect form-control" id="ServicePrinters_{{index}}_PrinterServiceTypeId"></select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Problem</label>
+                    <div class="col-md-8">
+                        <textarea class="form-control" id="ServicePrinters_{{index}}_Description" name="ServicePrinters[{{index}}].Description" rows="8">{{printer.description}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">İşlem</label>
+                    <div class="col-md-8">
+                        <textarea class="form-control" id="ServicePrinters_{{index}}_Process" name="ServicePrinters[{{index}}].Process" rows="8">{{printer.process}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Siyah</label>
+                    <div class="col-md-8">
+                        <input name="ServicePrinters[{{index}}].Mono" id="ServicePrinters_{{index}}_Mono" class="form-control" value="{{printer.mono}}" type="number">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Renkli</label>
+                    <div class="col-md-8">
+                        <input name="ServicePrinters[{{index}}].Color" id="ServicePrinters_{{index}}_Color" class="form-control" value="{{printer.color}}" type="number" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Bakım</label>
+                    <div class="col-md-8">
+                        <input name="ServicePrinters[{{index}}].IsMaintenanceOk" id="ServicePrinters_{{index}}_IsMaintenanceOk" class="awe-val awe-chk" type="checkbox"
+                               {{#if printer.maintenance}} checked {{/if}}> @*TO DO Register Helper*@
+                        </div>
+                    </div>
+                    <div class="form-actions pull-right">
+                        <button type="button" onclick="deletePrinter(this)" data-printer-id="{{printer.PrinterId}}" class="btn btn-danger">
+                            <i class="fa fa-trash-o"></i> Sil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/javascript">
+        var rowTemplateScript = $("#printer-row-template").html();
+        var rowTemplate = Handlebars.compile(rowTemplateScript);
+
+        var cardTemplateScript = $("#printer-card-template").html();
+        var cardTemplate = Handlebars.compile(cardTemplateScript);
+
+        function deletePrinter(data) {
+            var id = $(data).attr("data-printer-id");
+            if (confirm(id + ' numaralı yazıcıyı silmek istediğinize emin misiniz ? (Yazıcıyı silerseniz girmiş olduğunuz sayaç bilgileri de gidecektir.)')) {
+                $("#ServicePrinters_" + id + "_IsDeleted").val(1);
+                $("#printer-" + id + "-CardShowBtn").click();
+                $("#printer-" + id + "-CardBtns").hide();
+                $("#printer-" + id + "-Card").hide();
+
+                var input = $("#printer-" + id + "-Content").find('input'); //tüm inputlar seçilip zorunluluğu kaldırılacak.
+                input.each(function (i, v) {
+                    $(v).removeAttr("required");
+                });
+
+            }
+        }
+
+        function addPrinter() {
+
+            var index = $('#printer-table tbody tr').length;
+            var printerId = $("#newPrinterId").val();
+            var description = $("#newPrinterDescription").val();
+            var serviceType = $("#newPrinterServiceTypeId").val();
+
+
+            if (!printerId) {
+                showError("Lütfen yazıcı seçiniz");
+                return;
+            }
+            if (isPrinterExists(printerId)) {
+                showError("Bu yazıcı zaten bu serviste mevcut");
+                return;
+            }
+            if (!serviceType) {
+                showError("Lütfen işlem kategorisi seçiniz");
+                return;
+            }
+
+            if (!description) {
+                showError("Lütfen problem bilgisi giriniz");
+                return;
+            }
+
+            var printer = {
+                printerId: printerId,
+                description: description,
+                serviceType: serviceType,
+                printerName: $('#newPrinterId').find(':selected')[0].text,
+                status: $("#newPrinterStatus").val(),
+                process: $("#newPrinterProcess").val(),
+                mono: $("#newPrinterMono").val(),
+                color: $("#newPrinterColor").val(),
+                maintenance: $("#newPrinterMaintenance").is(':checked')
+            };
+
+            if (index == 0) {
+                $('#printer-table tbody').html(rowTemplate({ "printer": printer, "index": index }));
+                $('#printer-cards').html(cardTemplate({ "printer": printer, "index": index }));
+            }
+            else {
+                $('#printer-table tbody tr:last').after(rowTemplate({ "printer": printer, "index": index }));
+                $('#printer-cards .card:last').after(cardTemplate({ "printer": printer, "index": index }));
+            }
+
+            initDropDowns();
+            initForm();
+            clearNewPrinter();
+
+            setTimeout(function () {
+                $("#ServicePrinters_" + index + "_PrinterServiceTypeId").val(printer.serviceType).trigger('change');
+                $("#ServicePrinters_" + index + "_Status").val(printer.status).trigger('change');
+            }, 1000)
+
+            showSuccess("Yazıcı eklendi");
+            $("#addNewPrinterModal").modal('toggle');
+        }
+
+        function isPrinterExists(id) {
+            var printer = $("input[value='" + id + "'][class='printerId']");
+            if (printer.length) {
+                if ($("#ServicePrinters_" + id + "_IsDeleted").val() == 1) {
+                    if (confirm("Eklemek istediğiniz yazıcı bu servisten silinmiş. Aktif hale getirmek istiyor musunuz ?")) {
+                        $("#ServicePrinters_" + id + "_IsDeleted").val(0);
+                        $("#printer-" + id + "-Card").show();
+                        $("#printer-" + id + "-CardBtns").show();
+                        $("#printer-" + id + "-CardShowBtn").click();
+
+                        var input = $("#printer-" + id + "-Content").find('input');
+                        input.each(function (i, v) {
+                            if (!$(v).is("input:hidden"))
+                                $(v).attr("required", "");
+                        });
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        function clearNewPrinter() {
+            $("#newPrinterId").val("");
+            $('#newPrinterId').val("").trigger('change');
+            $("#newPrinterStatus").val("").trigger('change');;
+            $("#newPrinterServiceTypeId").val("").trigger('change');;
+            $("#newPrinterDescription").val("");
+            $("#newPrinterProcess").val("");
+            $("#newPrinterMono").val("0");
+            $("#newPrinterColor").val("0");
+
+            if ($("#newPrinterMaintenance").is(":checked"))
+                $("#newPrinterMaintenance").click();
+        }
+
+    </script>

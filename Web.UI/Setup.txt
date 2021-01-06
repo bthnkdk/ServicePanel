@@ -1,0 +1,2 @@
+﻿*Web Config'den Base LocationID belirlenecek
+*Worker Task Schedular'a kurulacak

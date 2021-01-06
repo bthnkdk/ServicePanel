@@ -1,0 +1,16 @@
+@{
+    Layout = "~/Views/Shared/_LayoutError.cshtml";
+}
+_R404
+<div class="m-grid m-grid--hor m-grid--root m-page">
+    <div class="m-grid__item m-grid__item--fluid m-grid  m-error-1">
+        <div class="m-error_container">
+            <span class="m-error_number">
+                <h1>404</h1>
+            </span>
+            <p class="m-error_desc">
+                @ViewBag.Message
+            </p>
+        </div>
+    </div>
+</div>

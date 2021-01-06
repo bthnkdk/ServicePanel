@@ -1,0 +1,25 @@
+﻿@model ServicePrinterInput
+@using (Html.Awe().BeginContext())
+{
+    using (Html.BeginForm())
+    {
+        @Html.HiddenFor(s => s.Id)
+        @Html.HiddenFor(s => s.ServiceId)
+        <input type="hidden" id="createPrinterServiceGridLocationId" name="LocationId" data-val="true" value="@Model.LocationId" />
+        <input type="hidden" id="editPrinterServiceGridLocationId" name="LocationId" data-val="true" value="@Model.LocationId" />
+        <input type="hidden" id="deletePrinterServiceGridLocationId" name="LocationId" data-val="true" value="@Model.LocationId" />
+        <div class="form-group row">
+            <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Yazıcı No</label>
+            <div class="col-sm-8">
+                @Html.Awe().AjaxRadioListFor(s => s.PrinterId).Url(Url.Content("/Data/GetPrinterByLocation")).Odropdown().Parent(s => s.LocationId)
+            </div>
+        </div>
+        @Html.EditorFor(s => s.PrinterServiceTypeId)
+        @Html.EditorFor(s => s.Description)
+        @Html.EditorFor(s => s.Process)
+        @Html.EditorFor(s => s.Mono)
+        @Html.EditorFor(s => s.Status)
+        @Html.EditorFor(s => s.Color)
+        @Html.EditorFor(s => s.IsMaintenanceOk)
+    }
+}

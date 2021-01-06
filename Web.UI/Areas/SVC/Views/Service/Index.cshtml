@@ -1,0 +1,193 @@
+﻿@model ServiceListViewModel
+@{
+    string controllerName = "Service";
+    var userTitle = WebUserManager.GetUserInfo().TitleId;
+}
+@using (Html.PageHead("Servis Listesi"))
+{
+    @Html.BreadCrumb("Servis Listesi", true, "/#/Service/Index");
+}
+<style>
+    a {
+        color: #404e67;
+    }
+
+    .list-group-item.active {
+        background-color: cornflowerblue;
+    }
+</style>
+<div class="content-detached content-right">
+    <div class="content-body">
+        <div class="content-overlay"></div>
+        <section class="row all-contacts">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-head">
+                        <div class="card-header">
+                            <h4 class="card-title">Servisler</h4>
+                            <div class="heading-elements mt-0">
+                                @*Bunun yerine button dropdown olcak şimdilik 2 buton olsa yeter biri aksiyonlar birisi excel *@
+                                @*<span class="dropdown">
+                                        <button id="btnSearchDrop1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-warning dropdown-menu-right dropdown-toggle btn-md">
+                                            <i class="feather icon-download-cloud white"></i>
+                                        </button>
+                                        <span aria-labelledby="btnSearchDrop1" class="dropdown-menu dropdown-menu-right mt-1" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(72px, 32px, 0px);">
+                                            <a href="#" class="dropdown-item"><i class="feather icon-download"></i> Export</a>
+                                        </span>
+                                    </span>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-body">
+                            @using (Html.GridActionBar())
+                            {
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-secondary btn-md" type="button" onclick="go('/#/Service/Create')" title="Yeni">
+                                        <i class='fa fa-plus tooltip-text-success'></i> Yeni
+                                    </button>
+                                </div>
+                                <div class="pull-right">
+                                    @Html.Awe().TextBox("txtSearch").Placeholder("ara").CssClass("searchtxt form-control form-control-sm").HtmlAttributes(new { onkeypress = $"return searchGrid(event,'{controllerName}Grid')" })
+                                    <button class="btn btn-secondary btn-sm" type="button" onclick="$('#@controllerName'+'Grid').data('api').load();" title="Ara"><i class='fa fa-search'></i></button>
+                                </div>
+                            }
+                            <div>
+                                @Html.Awe().Grid(controllerName + "Grid").Url(Url.Action("GridGetItems")).Parent("txtSearch").SingleColumnSort(true).Mod(o => o.AutoMiniPager().PageSize().PageInfo().Loading()).Persistence(Persistence.Local).PageSize(20).LoadOnParentChange(false).Columns(
+                                new Column { Width = 40, ClientFormat = "<input type='checkbox' name='id' value='.Id' />", Header = "<input type='checkbox' name='chkAll' />" },
+                                new Column { ClientFormat = GridUtils.GoEditFormat("/#/Service/Edit/"), Width = 40 }.Mod(o => o.Nohide()),
+                                new Column { Bind = "Location.CustomerId", ClientFormat = ".CustomerName", Header = "Müşteri Adı" },
+                                new Column { Bind = "LocationId", ClientFormat = ".LocationName", Header = "Lokasyon Adı" },
+                                new Column { Bind = "ServiceCategory.Id", ClientFormat = ".ServiceCategoryName", Header = "Kategori" },
+                                new Column { Bind = "Priority", Header = "Öncelik", ClientFormatFunc = "utils.servicePriority()" },
+                                new Column { Bind = "Status", Header = "Durum", ClientFormatFunc = "utils.serviceStatus()" },
+                                new Column { Bind = "ServiceDate", Header = "Servis Tarihi" },
+                                new Column { ClientFormatFunc = $"utils.deleteFormat('delete{controllerName}Grid','{controllerName}Grid')", Width = 40 }.Mod(o => o.Nohide())).ShowGroupBar(false)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<!--Filtreler-->
+
+<div class="sidebar-detached sidebar-left ps">
+    <div class="sidebar">
+        <div class="bug-list-sidebar-content">
+            <div class="card">
+                <!-- Servis Durumları-->
+                <div class="card-body border-top-blue-grey border-top-lighten-5">
+                    <div class="list-group">
+                        <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({params: {}});" class="list-group-item active">
+                            Tüm Servisler
+                            <span class="badge badge-secondary badge-pill float-right"> @Model.AllServiceCount</span>
+                        </a>
+                        <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({params: {ServiceStatusId:@ConstHelper.ServiceStatus.URUNONAYIBEKLIYOR}});" class="list-group-item list-group-item-action">
+                            Onay Bekleyen Servisler
+                            <span class="badge badge-warning badge-pill float-right"> @Model.WaitApprovalCount</span>
+                        </a>
+                        <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({params: {ServiceStatusId:@ConstHelper.ServiceStatus.TAMAMLANDI}});" class="list-group-item list-group-item-action">
+                            Tamamlanan Servisler
+                            <span class="badge badge-success badge-pill float-right"> @Model.CompletedServiceCount</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Servis Kategorileri-->
+                <div class="card-body border-top-blue-grey border-top-lighten-5">
+                    <p class="lead">Kategori</p>
+                    <div class="list-group">
+                        <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({ params: {} });" class="list-group-item active">
+                            Tümü
+                            <span class="badge badge-secondary badge-pill float-right"></span>
+                        </a>
+                        @foreach (var item in Model.ServiceCategories)
+                        {
+                            <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({params: {ServiceCategoryId:'@item.ServiceCategoryId'}});" class="list-group-item">
+                                @item.Name
+                                <span class="badge badge-danger badge-pill float-right">@item.Count</span>
+                            </a>
+
+                        }
+                    </div>
+                </div>
+                <!--İlçe Listesi-->
+                <div class="card-body border-top-blue-grey border-top-lighten-5">
+                    <p class="lead">İlçe</p>
+                    <div class="list-group">
+                        <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({ params: {} });" class="list-group-item active">
+                            Tümü
+                            <span class="badge badge-secondary badge-pill float-right"></span>
+                        </a>
+                        @foreach (var item in Model.ServiceTowns)
+                        {
+                            <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({params: {ServiceTownId:'@item.ServiceTownId'}});" class="list-group-item pull-left">
+                                @item.Name
+                                <span class="badge badge-primary badge-pill float-right">@item.Count</span>
+                            </a>
+                        }
+
+                    </div>
+                </div>
+                @if (userTitle != ConstHelper.Title.TEKNIK_PERSONEL)
+                {
+                    <div class="card-body border-top-blue-grey border-top-lighten-5">
+                        <p class="lead">Personel</p>
+                        <div class="list-group">
+                            <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({ params: {} });" class="list-group-item active">
+                                Tümü
+                                <span class="badge badge-secondary badge-pill float-right"></span>
+                            </a>
+                            @foreach (var item in Model.ServicePersonals)
+                            {
+                                <a href="#" onclick="$('#@controllerName' + 'Grid').data('api').load({params: {ServicePersonalId:'@item.ServicePersonalId'}});" class="list-group-item">
+                                    @item.Name
+                                    <span class="badge badge-info float-right">@item.Count</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div>
+</div>
+
+
+<!--END Filtreler-->
+
+
+<style>
+    input[type=checkbox] {
+        zoom: 1.3;
+        margin: 0;
+        vertical-align: middle;
+    }
+</style>
+<script>
+    $(function () {
+        var gridName = '@controllerName' + 'Grid';
+        gridSelectAll(gridName);
+
+        //Seçilileri consola yaz
+        $('#herhangibirbuton').click(function () {
+            var arr = $('#'+gridName+' [name=id]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            console.log(JSON.stringify(arr));
+        });
+    });
+
+    function gridSelectAll(gridId) {
+        //select/unselect all
+        var $grid = $('#' + gridId);
+        $grid.on('click', '[name=chkAll]', function () {
+            var isChecked = $(this).prop('checked');
+            $grid.find('[name=id]').prop('checked', isChecked);
+        });
+    }
+</script>

@@ -1,0 +1,32 @@
+﻿@{
+    string controllerName = "AppUser";
+}
+@using (Html.PageHead("Kullanıcı Listesi"))
+{
+    @Html.BreadCrumb("Kullanıcı Listesi", true, "/#/AppUser/Index");
+}
+@*@Html.Awe().AjaxRadioList("oTitle").Url(Url.Content("~/Data/GetTitles")).Odropdown().HtmlAttributes(new { style = "min-width:15em;height:32px;" })*@
+@using (Html.GridActionBar())
+{
+    <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-secondary btn-md" type="button" onclick="@Html.Awe().OpenPopup($"create{controllerName}Grid").MaxWidth(1000)" title="Yeni"><i class='fa fa-plus tooltip-text-success'></i> Yeni</button>
+    </div>
+    <div class="pull-right">
+        @Html.Awe().TextBox("txtSearch").Placeholder("ara").CssClass("searchtxt form-control form-control-sm").HtmlAttributes(new { onkeypress = $"return searchGrid(event,'{controllerName}Grid')" })
+        <button class="btn btn-secondary btn-sm" type="button" onclick="$('#@controllerName'+'Grid').data('api').load(); " title="Ara"><i class='fa fa-search'></i></button>
+    </div>
+}
+@Html.Awe().InitPopupForm().Name("authCode").Title("Yetki Kodları").Height(300).Width(650).Modal(true).Url(Url.Action("AppUserAuthority", "AppUser")).Success("ajaxFormCompleted"),
+
+@Html.Awe().Grid(controllerName + "Grid").Url(Url.Action("GridGetItems")).Parent("txtSearch").Persistence(Persistence.Local).SingleColumnSort(true).Mod(o => o.PageSize().PageInfo().Loading().AutoMiniPager()).MinHeight(600).LoadOnParentChange(false).Columns(
+new Column { ClientFormat = GridUtils.EditFormat($"edit{controllerName}Grid"), Width = 40 }.Mod(o => o.Nohide()),
+new Column { ClientFormat = "<button type=\"button\" class=\"awe-btn awe-nonselect editbtn\" style=\"width:26px;\" onclick=\"awe.open('authCode', { params:{ id: '.Id' } }, event)\"><span class='fa fa-user m--font-focus'></span></button>", Width = 45 },
+           new Column { Bind = "Firstname", Header = "Ad", Sort = Sort.Asc },
+           new Column { Bind = "Lastname", Header = "Soyad" },
+           new Column { Bind = "Username", Header = "E-Posta" },
+           new Column { Bind = "Title.Name", ClientFormat = ".TitleName", Header = "Görev" },
+          new Column { ClientFormatFunc = $"utils.deleteFormat('delete{controllerName}Grid','{controllerName}Grid')", Width = 40 }.Mod(o => o.Nohide())).ShowGroupedColumn(true)
+@Html.InitCrudPopupsForGrid(controllerName + "Grid", controllerName, 450, 600, "Kullanıcı")
+
+
+@*<form id="excelForm" method="post" action="@Url.Action("Excel")"></form>*@

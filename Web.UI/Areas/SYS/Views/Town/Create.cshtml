@@ -1,0 +1,9 @@
+﻿@model TownInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    @Html.EditorFor(q => q.Name)
+    @Html.EditorFor(s => s.AreaId)
+    @Html.EditorFor(s => s.CityId)
+    @Html.EditorFor(s => s.OrderId)
+}

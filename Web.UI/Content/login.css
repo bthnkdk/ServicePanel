@@ -1,0 +1,13 @@
+﻿.field-validation-error {
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.card-header {
+    text-align: center;
+    font-weight: 700;
+}
+
+label {
+    font-weight: 700;
+}

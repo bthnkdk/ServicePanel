@@ -1,0 +1,6 @@
+﻿@model PreApplicationStatusInput
+@Html.Partial("_ValSum")
+@using (Html.BeginForm())
+{
+    @Html.EditorFor(q => q.Name)
+}

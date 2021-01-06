@@ -1,0 +1,12 @@
+﻿@model Domain.StockMovement
+<div style="padding: .5em; line-height: 1.7em;">
+    Müşteri: @Model.Location.Customer.Name<br />
+    Lokasyon: @Model.Location.Name<br />
+    Stok : @Model.Stock.Name / Kategori: @Model.Stock.StockCategory.Name<br />
+    Oluşturan Personel: @Model.CreateAppUser.FullName<br />
+    Aksiyon Personeli: @Model.AppUser.FullName<br />
+    Adet: @Model.Count <br />
+    Tarih: @Model.Date.ToShortDateString() <br />
+    Fiyat: @Model.Price <br />
+    Barkod: @Model.Stock.Barcode<br />
+</div>

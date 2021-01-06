@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "_FieldLayout.cshtml";
+    var values = ViewData.ModelMetadata.AdditionalValues;
+}
+
+
+<div class="float-left">
+    <input type="checkbox" id="Tests" class="switch hidden" checked="" />
+    <div is="0" class="btn-group">
+        <a is="0" class="btn btn-default">
+            @(values.ContainsKey("SwitcheryFalseText") ? Html.Raw(values["SwitcheryFalseText"].ToString()) : Html.Raw(""))
+        </a>
+        <a is="1" class="btn active btn-success">
+            @(values.ContainsKey("SwitcheryTrueText") ? Html.Raw(values["SwitcheryTrueText"].ToString()) : Html.Raw(""))
+        </a>
+    </div>
+</div>

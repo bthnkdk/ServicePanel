@@ -1,0 +1,12 @@
+@{
+    Layout = "_FieldLayout.cshtml";
+    var values = ViewData.ModelMetadata.AdditionalValues;
+    ViewData.ModelMetadata.AdditionalValues.Add("__idpostfix", "-awed");
+    IDictionary<string,string> attrs = new Dictionary<string,string>();
+    attrs.Add("autocomplete","off");
+}
+@Html.Awe().TextBox("").CssClass("form-control form-control-sm").EditorHtmlAttributes(attrs).ReadonlyInput()
+@if (values.ContainsKey("Info"))
+{
+    <small class="form-text text-muted">@Html.Raw(values["Info"].ToString())</small>
+}

@@ -1,0 +1,49 @@
+﻿@model List<Domain.AppUserLog>
+@using (Html.PageHead("Kullanıcı Logları"))
+{
+    @Html.BreadCrumb("Kullanıcı Logları", true, "/#/AppUser/AppUserLog");
+}
+<link href="~/Content/htmltable/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" />
+<link href="~/Content/htmltable/css/main.css" rel="stylesheet" />
+<div class="table100 ver1 m-b-110">
+    <div class="table100-head">
+        <table>
+            <thead>
+                <tr class="row100 head">
+                    <th class="cell100 column1">Kullanıcı</th>
+                    <th class="cell100 column2">Ip Adresi</th>
+                    <th class="cell100 column2">Tarayıcı</th>
+                    <th class="cell100 column2">İşletim Sistemi</th>
+                    <th class="cell100 column2">Tarih</th>
+                    <th class="cell100 column2">İşlem Durumu</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="table100-body js-pscroll">
+        <table>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr class="row100 body">
+                    <td class="cell100 column1">@item.Username</td>
+                    <td class="cell100 column2">@item.IpAddress</td>
+                    <td class="cell100 column2">@item.Browser</td>
+                    <td class="cell100 column2">@item.Os</td>
+                    <td class="cell100 column2">@item.Date</td>
+                    <td class="cell100 column2">@item.Status</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Content/htmltable/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script>
+    $('.js-pscroll').each(function () {
+        var ps = new PerfectScrollbar(this);
+        $(window).on('resize', function () {
+            ps.update();
+        })
+    });
+</script>

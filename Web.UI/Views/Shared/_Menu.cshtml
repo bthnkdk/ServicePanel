@@ -1,0 +1,86 @@
+﻿@model Menu
+@{
+    var path = HttpContext.Current.Request.Url.AbsolutePath;
+    var house = Model;
+}
+<div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
+    <div class="main-menu-content">
+        <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+            <li class=" navigation-header">
+                <span>Menü</span><i class=" ft-minus" data-toggle="tooltip" data-placement="right"
+                                    data-original-title="Menu"></i>
+            </li>
+            @foreach (var item in Model.Menu1.Where(q => q.ParentId == house.Id).OrderBy(q => q.OrderNumber))
+            {
+
+                if (item.Url != "#")
+                {
+                    <li class="nav-item">
+                        <a href="@item.Url">
+                            <i class="@item.Icon"></i>
+                            <span class="menu-title" data-i18n=""> @item.Name</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    var childItems = item.Menu1.Where(q => q.ParentId == item.Id && !q.IsDeleted).OrderBy(q => q.OrderNumber).ToList();
+
+                    if (childItems != null && childItems.Count() > 0)
+                    {
+                        <li class=" nav-item">
+                            <a href="#">
+                                <i class="@item.Icon"></i><span class="menu-title" data-i18n="">@item.Name</span>
+                                <span class="badge badge badge-primary badge-pill float-right mr-2"></span>
+                            </a>
+                            <ul class="menu-content">
+                                @foreach (var childItem in childItems.OrderBy(s => s.OrderNumber))
+                                {
+                                    bool hasSubChild = childItem.Menu1 != null && childItem.Menu1.Where(s => !s.IsDeleted).Count() > 0;
+                                    <li>
+                                        <a class="menu-item" href="@childItem.Url">
+                                            <i class="@childItem.Icon"></i>
+                                            <span>@childItem.Name</span>
+                                        </a>
+                                        @if (hasSubChild)
+                                        {
+                                            <ul class="menu-content">
+                                                @foreach (var subChildItem in childItem.Menu1.Where(s => !s.IsDeleted).OrderBy(s => s.OrderNumber))
+                                                {
+                                                    bool hasLastChild = subChildItem.Menu1 != null && subChildItem.Menu1.Where(s => !s.IsDeleted).Count() > 0;
+                                                    <li>
+                                                        <a class="menu-item" href="@subChildItem.Url">
+                                                            <i class="@subChildItem.Icon"></i>
+                                                            <span>@subChildItem.Name</span>
+                                                        </a>
+                                                        @if (hasLastChild)
+                                                        {
+                                                            <ul class="menu-content">
+                                                                @foreach (var lastChildItem in subChildItem.Menu1.Where(s => !s.IsDeleted).OrderBy(s => s.OrderNumber))
+                                                                {
+                                                                    <li>
+                                                                        <a class="menu-item" href="@lastChildItem.Url">
+                                                                            <i class="@lastChildItem.Icon"></i>
+                                                                            <span>@lastChildItem.Name</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                }
+
+            }
+        </ul>
+    </div>
+</div>
+

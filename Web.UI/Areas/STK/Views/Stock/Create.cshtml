@@ -1,0 +1,19 @@
+﻿@model StockInput
+@Html.Partial("_ValSum")
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(q => q.RowId)
+    @Html.EditorFor(q => q.Name)
+    @Html.EditorFor(q => q.StockCategoryId)
+    @Html.EditorFor(q => q.Barcode)
+    @Html.EditorFor(q => q.OptionalBarcode)
+    @Html.EditorFor(q => q.Type)
+    @Html.EditorFor(q => q.Count)
+    @Html.EditorFor(q => q.CountAlert)
+    @Html.EditorFor(q => q.PriceBuy)
+    @Html.EditorFor(q => q.PriceBuyKDV)
+    @Html.EditorFor(q => q.PriceSell)
+    @Html.EditorFor(q => q.PriceSellKDV)
+    @Html.EditorFor(q => q.Address)
+}

@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="author" content="batuhankadik">
+    <title>Panel - @WebUserManager.GetUserInfo().TitleName</title>
+    <link rel="apple-touch-icon" href="~/Assets/images/ico/apple-icon-76.png">
+    <link rel="shortcut icon" type="image/x-icon" href="~/Assets/images/ico/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i%7COpen+Sans:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+
+    @*<link href="~/Content/select2.min.css" />*@
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+    <link href="~/Assets/css/style.css" rel="stylesheet" />
+    <link href="~/Assets/css/vendors.css" rel="stylesheet" />
+    <link href="~/Assets/css/app.css" rel="stylesheet" />
+    <link href="~/Assets/css/core/menu/menu-types/vertical-menu-modern.css" rel="stylesheet" />
+    <link href="~/Assets/css/core/colors/palette-gradient.min.css" rel="stylesheet" />
+    <link href="~/Assets/vendors/css/extensions/unslider.css" rel="stylesheet" />
+    <link href="~/Assets/vendors/css/weather-icons/climacons.min.css" rel="stylesheet" />
+
+    @RenderSection("styles", false)
+    @Styles.Render("~/Content/awe/themes/wui/styles")
+
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <link href="~/Assets/fonts/meteocons/style.css" rel="stylesheet" />
+    <link href="~/Assets/fonts/simple-line-icons/style.css" rel="stylesheet" />
+    <link href="~/Assets/fonts/font-awesome/css/font-awesome.css" />
+    <link href="~/Assets/css/pages/timeline.css" rel="stylesheet" />
+    <link href="~/Content/loader/loader.css" rel="stylesheet" />
+    <style>
+        .select2-container--open {
+            z-index: 9999999
+        }
+    </style>
+</head>
+<body class="vertical-layout vertical-menu-modern 2-columns   menu-expanded fixed-navbar"
+      data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+    @Html.Partial("_Header")
+    @Html.Action("MenuList", "Home")
+    <div class="app-content content">
+        <div id="loader" style="display:none;">
+            @Html.Partial("loader")
+        </div>
+        <div class="content-wrapper">
+            @RenderBody()
+            <div class="content-body" id="MainContent">
+            </div>
+        </div>
+    </div>
+    <footer class="footer footer-static footer-light navbar-border">
+        <p class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2">
+            <span class="float-md-left d-block d-md-inline-block">
+                Copyright &copy; @DateTime.Now.Year <a class="text-bold-800 grey darken-2" href="#" target="_blank">Panel</a>, Tüm hakları saklıdır.
+            </span>
+        </p>
+    </footer>
+    <script src="~/Assets/vendors/js/vendors.min.js"></script>
+    <script src="~/Assets/js/core/app-menu.js"></script>
+    <script src="~/Assets/js/core/app.js"></script>
+    <script src="~/Assets/js/scripts/customizer.js"></script>
+    <script src="~/Assets/vendors/js/timeline/horizontal-timeline.js"></script>
+    <script src="~/Assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
+    <script src="~/Scripts/handlebars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    @Scripts.Render("~/Scripts/awe/script")
+    @Scripts.Render("~/Scripts/corejs")
+
+    @Html.Awe().Init()
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript">
+            var root = '@(Url.Content("~"))';
+            awem.clientDict = $.extend(awem.clientDict, @Html.Raw(Json.Encode(ClientSideHelper.GetClientDict())));
+            awe.gmd = [awem.gridLoading, awem.gridPageInfo];
+            var controller = '@(ViewContext.RouteData.Values["Controller"].ToString().ToLower())';
+            var action = '@(ViewContext.RouteData.Values["Action"].ToString().ToLower())';
+        $(function () {
+                documentReady(root, controller, action);
+            });
+        setInterval(function () {
+        $("a[href='https://www.aspnetawesome.com']").hide();
+    }, 500)
+    </script>
+</body>
+</html>

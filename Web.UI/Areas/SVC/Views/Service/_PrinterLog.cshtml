@@ -1,0 +1,26 @@
+﻿@model List<ServicePrinterInput>
+@for (int i = 0; i < Model.Count; i++)
+{
+    <div class='card box-shadow-0 border-blue' id="printer_@(i)_Card">
+        <div data-action='collapse' class='card-header ft-minus inverse @(Model[i].Status == @ConstHelper.ServiceStatus.YENI ? "bg-blue":"")'>
+            <h4 class='card-title'>@Model[i].Id | @Model[i].PrinterName</h4>
+            <a class='heading-elements-toggle'><i class='fa fa-ellipsis-v font-medium-3'></i></a>
+            <div class='heading-elements'>
+                <ul class='list-inline mb-0'>
+                    <li><a data-action='collapse'><i class='ft-minus'></i></a></li>
+                    <li><a data-action='expand'><i class='ft-maximize'></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class='card-content collpase show'>
+            <div class='card-body' id="printer_@(i)_Body">
+                <div class="form-group row">
+                    <label class="col-sm-4 font-weight-bold col-form-label col-form-label-sm">Durum</label>
+                    <div class="col-md-8">
+                        @Html.Awe().AjaxRadioList($"Printers[0].Status").Url(Url.Content("/Data/GetServiceStatus")).Odropdown()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
